@@ -2,8 +2,8 @@
    Reemplaza SUPABASE_URL y SUPABASE_ANON_KEY con los valores
    de tu proyecto en https://app.supabase.com → Settings → API
    ─────────────────────────────────────────────────────────── */
-const SUPABASE_URL      = 'https://TU_PROYECTO.supabase.co';
-const SUPABASE_ANON_KEY = 'TU_ANON_KEY';
+const SUPABASE_URL      = 'https://cdarbygwhtwkdgkelktw.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_hBoCRcO2ozNu8l9lcRSTOw_NHWUZ-Qb';
 
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);

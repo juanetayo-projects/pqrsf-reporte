@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reporte PQRSF – Clínica Santa Bárbara</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+<!-- ── HEADER ─────────────────────────────────────────────────── -->
+<header class="site-header">
+  <div class="header-inner">
+    <img src="assets/logo-wide.png" alt="Clínica de Alta Complejidad Santa Bárbara" class="logo" onerror="this.src='assets/logo.png'" />
+    <div class="header-text">
+      <span class="header-tag">Sistema PQRSF</span>
+      <span class="header-subtitle">Peticiones · Quejas · Reclamos · Sugerencias · Felicitaciones</span>
+    </div>
+  </div>
+</header>
+
+<!-- ── HERO ───────────────────────────────────────────────────── -->
+<section class="hero" id="hero">
+  <div class="hero-content">
+    <div class="hero-icon"><i class="fa-solid fa-comments"></i></div>
+    <h1>Su opinión nos importa</h1>
+    <p>Diligencie el formulario para registrar su PQRSF. Nos comprometemos a dar respuesta oportuna y a mejorar continuamente nuestro servicio.</p>
+    <button class="btn-primary btn-lg" onclick="startForm()">
+      <i class="fa-solid fa-play"></i> Iniciar registro
+    </button>
+  </div>
+  <div class="hero-cards">
+    <div class="type-preview" data-type="Petición"><i class="fa-solid fa-file-lines"></i><span>Petición</span></div>
+    <div class="type-preview" data-type="Queja"><i class="fa-solid fa-triangle-exclamation"></i><span>Queja</span></div>
+    <div class="type-preview" data-type="Reclamo"><i class="fa-solid fa-gavel"></i><span>Reclamo</span></div>
+    <div class="type-preview" data-type="Sugerencia"><i class="fa-solid fa-lightbulb"></i><span>Sugerencia</span></div>
+    <div class="type-preview" data-type="Felicitación"><i class="fa-solid fa-star"></i><span>Felicitación</span></div>
+  </div>
+</section>
+
+<!-- ── FORM WIZARD ────────────────────────────────────────────── -->
+<section class="form-section" id="formSection" style="display:none">
+  <div class="form-container">
+
+    <!-- Progress bar -->
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="step-indicator" id="stepIndicator"></div>
+
+    <!-- ── STEP 1: Tipo de PQRSF ── -->
+    <div class="step active" id="step1">
+      <div class="step-header">
+        <div class="step-num">1</div>
+        <div>
+          <h2>¿Qué tipo de PQRSF desea registrar?</h2>
+          <p>Seleccione la opción que mejor describa su solicitud</p>
+        </div>
+      </div>
+      <div class="type-grid">
+        <label class="type-card" for="tipo-peticion">
+          <input type="radio" name="tipo_reporte" id="tipo-peticion" value="Petición" />
+          <div class="type-card-inner">
+            <div class="type-icon blue"><i class="fa-solid fa-file-lines"></i></div>
+            <h3>Petición</h3>
+            <p>Solicitud de información, documentos o actuaciones de la institución</p>
+          </div>
+        </label>
+        <label class="type-card" for="tipo-queja">
+          <input type="radio" name="tipo_reporte" id="tipo-queja" value="Queja" />
+          <div class="type-card-inner">
+            <div class="type-icon orange"><i class="fa-solid fa-triangle-exclamation"></i></div>
+            <h3>Queja</h3>
+            <p>Manifestación de inconformidad por la prestación del servicio</p>
+          </div>
+        </label>
+        <label class="type-card" for="tipo-reclamo">
+          <input type="radio" name="tipo_reporte" id="tipo-reclamo" value="Reclamo" />
+          <div class="type-card-inner">
+            <div class="type-icon red"><i class="fa-solid fa-gavel"></i></div>
+            <h3>Reclamo</h3>
+            <p>Exigencia de un derecho que se considera vulnerado o desconocido</p>
+          </div>
+        </label>
+        <label class="type-card" for="tipo-sugerencia">
+          <input type="radio" name="tipo_reporte" id="tipo-sugerencia" value="Sugerencia" />
+          <div class="type-card-inner">
+            <div class="type-icon green"><i class="fa-solid fa-lightbulb"></i></div>
+            <h3>Sugerencia</h3>
+            <p>Propuesta para mejorar los procesos o servicios de la institución</p>
+          </div>
+        </label>
+        <label class="type-card" for="tipo-felicitacion">
+          <input type="radio" name="tipo_reporte" id="tipo-felicitacion" value="Felicitación" />
+          <div class="type-card-inner">
+            <div class="type-icon gold"><i class="fa-solid fa-star"></i></div>
+            <h3>Felicitación</h3>
+            <p>Reconocimiento por una experiencia positiva o excelente atención</p>
+          </div>
+        </label>
+      </div>
+      <div class="step-error" id="err1"></div>
+      <div class="step-nav">
+        <span></span>
+        <button class="btn-primary" onclick="nextStep(1)">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- ── STEP 2: Información institucional ── -->
+    <div class="step" id="step2">
+      <div class="step-header">
+        <div class="step-num">2</div>
+        <div>
+          <h2>Información institucional</h2>
+          <p>Indíquenos a qué entidad, sede y proceso corresponde su manifestación</p>
+        </div>
+      </div>
+      <div class="form-grid">
+
+        <div class="field-wrap full">
+          <label><i class="fa-solid fa-hospital"></i> Entidad que recibe la PQRSF <span class="req">*</span></label>
+          <div class="select-wrap">
+            <select id="entidad" required>
+              <option value="">— Seleccione —</option>
+              <option>Clínica Alta Complejidad Santa Bárbara</option>
+              <option>Asegurador</option>
+              <option>Biolab</option>
+              <option>Supersalud/Defensoría (Asegurador)</option>
+            </select>
+          </div>
+          <div class="field-img"><i class="fa-solid fa-building-shield"></i></div>
+        </div>
+
+        <div class="field-wrap">
+          <label><i class="fa-solid fa-location-dot"></i> Sede <span class="req">*</span></label>
+          <div class="select-wrap">
+            <select id="sede" required>
+              <option value="">— Seleccione —</option>
+              <option>CAC Santa Bárbara (Centro Especialistas)</option>
+              <option>CAC Santa Bárbara (Torre)</option>
+              <option>CAC Santa Bárbara (Urgencias)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-wrap">
+          <label><i class="fa-solid fa-sitemap"></i> Proceso / Servicio <span class="req">*</span></label>
+          <div class="select-wrap">
+            <select id="proceso" required onchange="autoFillCorreo()">
+              <option value="">— Seleccione —</option>
+              <option>Docencia Investigación y Gestión del Conocimiento</option>
+              <option>Gestión Administrativa</option>
+              <option>Gestión Angiografía</option>
+              <option>Gestión Call center</option>
+              <option>Gestión Comercial, Riesgo y Aseguramiento</option>
+              <option>Gestión de Atención Ambulatoria</option>
+              <option>Gestión de Cuidados Intensivos</option>
+              <option>Gestión de Egreso Seguro</option>
+              <option>Gestión de Facturación</option>
+              <option>Gestión de Hospitalización</option>
+              <option>Gestión de Hospitalización Parcial</option>
+              <option>Gestión de Hospitalización Piso 2</option>
+              <option>Gestión de Hospitalización Piso 7 y 8</option>
+              <option>Gestión de Imágenes Diagnosticas</option>
+              <option>Gestión de Ingreso</option>
+              <option>Gestión de la Atención Quirúrgica</option>
+              <option>Gestión de la Experiencia en la Atención</option>
+              <option>Gestión de Mantenimiento e Infraestructura</option>
+              <option>Gestión de Referencia y Contrareferencia</option>
+              <option>Gestión de Servicios Asistenciales</option>
+              <option>Gestión de Urgencias Adulto</option>
+              <option>Gestión de Urgencias Pediatría</option>
+              <option>Gestión Jurídica</option>
+              <option>Gestión Seguridad y Salud en el Trabajo</option>
+              <option>Gestión TICS</option>
+              <option>Laboratorio Clínico</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-wrap">
+          <label><i class="fa-solid fa-calendar-day"></i> Fecha de la manifestación <span class="req">*</span></label>
+          <input type="date" id="fecha_manifestacion" required />
+        </div>
+
+        <div class="field-wrap">
+          <label><i class="fa-solid fa-satellite-dish"></i> Fuente <span class="req">*</span></label>
+          <div class="select-wrap">
+            <select id="fuente" required>
+              <option value="">— Seleccione —</option>
+              <option>Buzón de sugerencia</option>
+              <option>Email</option>
+              <option>Pagina Web</option>
+              <option>Personal/Verbal</option>
+              <option>Redes Sociales</option>
+              <option>Teléfonico</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-wrap">
+          <label><i class="fa-solid fa-calendar-check"></i> Fecha apertura del buzón</label>
+          <input type="date" id="fecha_apertura" />
+        </div>
+
+      </div>
+      <div class="step-error" id="err2"></div>
+      <div class="step-nav">
+        <button class="btn-secondary" onclick="prevStep(2)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
+        <button class="btn-primary" onclick="nextStep(2)">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- ── STEP 3: Tipo de usuario ── -->
+    <div class="step" id="step3">
+      <div class="step-header">
+        <div class="step-num">3</div>
+        <div>
+          <h2>Tipo de usuario</h2>
+          <p>Indíquenos su relación con la institución y su información de aseguramiento</p>
+        </div>
+      </div>
+
+      <div class="user-type-grid">
+        <label class="user-card" for="u-paciente">
+          <input type="radio" name="tipo_usuario" id="u-paciente" value="Paciente" />
+          <div class="user-card-inner">
+            <i class="fa-solid fa-bed-pulse"></i>
+            <span>Paciente</span>
+          </div>
+        </label>
+        <label class="user-card" for="u-familiar">
+          <input type="radio" name="tipo_usuario" id="u-familiar" value="Familiar" />
+          <div class="user-card-inner">
+            <i class="fa-solid fa-people-group"></i>
+            <span>Familiar</span>
+          </div>
+        </label>
+        <label class="user-card" for="u-asegurador">
+          <input type="radio" name="tipo_usuario" id="u-asegurador" value="Asegurador" />
+          <div class="user-card-inner">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Asegurador</span>
+          </div>
+        </label>
+      </div>
+
+      <div class="form-grid mt-4">
+        <div class="field-wrap">
+          <label><i class="fa-solid fa-handshake"></i> Convenio / EPS <span class="req">*</span></label>
+          <div class="select-wrap">
+            <select id="convenio" required>
+              <option value="">— Seleccione —</option>
+              <option>ARL</option>
+              <option>ASMET SALUD</option>
+              <option>BATALLÓN</option>
+              <option>COMFENALCO</option>
+              <option>Compañia Aseguradora SOAT</option>
+              <option>COOMEVA Medicina Prepagada</option>
+              <option>EMSSANAR</option>
+              <option>FOMAG</option>
+              <option>NUEVA EPS</option>
+              <option>Particular</option>
+              <option>SALUD TOTAL</option>
+              <option>SANITAS</option>
+              <option>SOAT</option>
+              <option>SOS</option>
+              <option>SOS PAC</option>
+              <option>SURA</option>
+              <option>SURA PAC</option>
+              <option>UNISALUD</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-wrap">
+          <label><i class="fa-solid fa-id-card-clip"></i> Régimen <span class="req">*</span></label>
+          <div class="select-wrap">
+            <select id="regimen" required>
+              <option value="">— Seleccione —</option>
+              <option>Contributivo</option>
+              <option>Subsidiado</option>
+              <option>No aplica</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-error" id="err3"></div>
+      <div class="step-nav">
+        <button class="btn-secondary" onclick="prevStep(3)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
+        <button class="btn-primary" onclick="nextStep(3)">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- ── STEP 4: Datos personales ── -->
+    <div class="step" id="step4">
+      <div class="step-header">
+        <div class="step-num">4</div>
+        <div>
+          <h2>Datos personales</h2>
+          <p>Su información nos permite dar seguimiento a su caso</p>
+        </div>
+      </div>
+      <div class="form-grid">
+
+        <div class="field-wrap full">
+          <label><i class="fa-solid fa-user"></i> Nombre y apellido del paciente <span class="req">*</span></label>
+          <input type="text" id="nombre_paciente" placeholder="Ej: Juan Carlos Pérez García" required />
+        </div>
+
+        <div class="field-wrap">
+          <label><i class="fa-solid fa-address-card"></i> Número de identificación <span class="req">*</span></label>
+          <input type="text" id="numero_id" placeholder="Ej: 12345678" required inputmode="numeric" />
+        </div>
+
+        <div class="field-wrap">
+          <label><i class="fa-solid fa-phone"></i> Teléfono de contacto</label>
+          <input type="tel" id="telefono" placeholder="Ej: 3001234567" inputmode="numeric" />
+        </div>
+
+        <div class="field-wrap full">
+          <label><i class="fa-solid fa-house"></i> Dirección de residencia</label>
+          <input type="text" id="direccion" placeholder="Ej: Calle 10 #5-23, Barrio Centro" />
+        </div>
+
+        <div class="field-wrap full">
+          <label><i class="fa-solid fa-envelope"></i> Correo electrónico del reportante</label>
+          <input type="email" id="email_reporta" placeholder="Ej: ejemplo@correo.com" />
+          <small class="field-hint">Este correo recibirá las notificaciones sobre su solicitud</small>
+        </div>
+
+      </div>
+      <div class="step-error" id="err4"></div>
+      <div class="step-nav">
+        <button class="btn-secondary" onclick="prevStep(4)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
+        <button class="btn-primary" onclick="nextStep(4)">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- ── STEP 5: Descripción ── -->
+    <div class="step" id="step5">
+      <div class="step-header">
+        <div class="step-num">5</div>
+        <div>
+          <h2>Descripción del caso</h2>
+          <p>Cuéntenos en detalle lo ocurrido para poder atender su solicitud</p>
+        </div>
+      </div>
+      <div class="form-grid">
+
+        <div class="field-wrap full">
+          <label><i class="fa-solid fa-pen-to-square"></i> Describa su PQRSF <span class="req">*</span></label>
+          <textarea id="descripcion" rows="5" placeholder="Describa con detalle su petición, queja, reclamo, sugerencia o felicitación…" required></textarea>
+          <div class="char-count"><span id="charCount">0</span> / 1000 caracteres</div>
+        </div>
+
+        <div class="field-wrap full">
+          <label><i class="fa-solid fa-circle-exclamation"></i> Falla o atributo identificado <span class="req">*</span></label>
+          <div class="select-wrap">
+            <select id="falla" required>
+              <option value="">— Seleccione —</option>
+              <optgroup label="Acceso y programación">
+                <option>1. Caída del sistema</option>
+                <option>1. Cambio de Profesional</option>
+                <option>1. No responde el contact center</option>
+                <option>1. Retraso en admisión</option>
+                <option>1. Servicio no contratado</option>
+                <option>1. Servicio no disponible en la sede</option>
+                <option>1. Valor elevado en tarifa (cuota moderadora, copago, cotización particular)</option>
+              </optgroup>
+              <optgroup label="Oportunidad en la atención">
+                <option>2. Administración tardía de medicamentos y/o conductas</option>
+                <option>2. Demora en los trámites de remisión</option>
+                <option>2. Inoportunidad en la programación de ayudas diagnostica intrahospitalarias</option>
+                <option>2. No disponibilidad de agenda</option>
+                <option>2. No recibió llamada de retorno</option>
+                <option>2. Recurso limitado</option>
+                <option>2. Reprogramación de cita o turno</option>
+                <option>2. Retraso en la atención</option>
+                <option>2. Retraso en la entrega de resultados</option>
+                <option>2. Retraso en la programación de procedimientos</option>
+                <option>2. Retraso en la respuesta interconsulta</option>
+              </optgroup>
+              <optgroup label="Seguridad e infraestructura">
+                <option>3. Daño en infraestructura</option>
+                <option>3. Identificación incorrecta del paciente</option>
+                <option>3. Limpieza</option>
+                <option>3. Procedimiento asistencial inapropiado</option>
+              </optgroup>
+              <optgroup label="Gestión clínica">
+                <option>4. Errores en formulas</option>
+                <option>4. Inconformidad con tratamiento</option>
+                <option>4. Información Errada</option>
+                <option>4. Retraso en autorización home care</option>
+              </optgroup>
+              <optgroup label="Comunicación e información">
+                <option>5. Falta de información al paciente para su intervención</option>
+              </optgroup>
+              <optgroup label="Experiencia y confort">
+                <option>6. Calidad/cantidad en la alimentación</option>
+                <option>6. Disposición y flexibilidad de quien le atiende</option>
+                <option>6. Instalaciones no confortables</option>
+                <option>6. Ruido</option>
+                <option>6. Trato humanizado</option>
+              </optgroup>
+              <optgroup label="Reconocimiento">
+                <option>7. Felicitaciones</option>
+              </optgroup>
+            </select>
+          </div>
+        </div>
+
+        <div class="field-wrap">
+          <label><i class="fa-solid fa-stethoscope"></i> Especialidad</label>
+          <input type="text" id="especialidad" placeholder="Ej: Cardiología, Urgencias…" />
+        </div>
+
+        <div class="field-wrap">
+          <label><i class="fa-solid fa-user-nurse"></i> Colaborador involucrado</label>
+          <input type="text" id="colaborador" placeholder="Nombre del colaborador (si aplica)" />
+        </div>
+
+      </div>
+      <div class="step-error" id="err5"></div>
+      <div class="step-nav">
+        <button class="btn-secondary" onclick="prevStep(5)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
+        <button class="btn-primary" onclick="nextStep(5)">Revisar <i class="fa-solid fa-arrow-right"></i></button>
+      </div>
+    </div>
+
+    <!-- ── STEP 6: Resumen ── -->
+    <div class="step" id="step6">
+      <div class="step-header">
+        <div class="step-num"><i class="fa-solid fa-check"></i></div>
+        <div>
+          <h2>Resumen de su PQRSF</h2>
+          <p>Verifique la información antes de enviar</p>
+        </div>
+      </div>
+      <div id="summaryContent" class="summary-grid"></div>
+      <div class="privacy-note">
+        <i class="fa-solid fa-lock"></i>
+        Sus datos serán tratados de acuerdo con nuestra <strong>Política de Tratamiento de Datos Personales</strong> (Ley 1581 de 2012).
+      </div>
+      <div class="step-error" id="err6"></div>
+      <div class="step-nav">
+        <button class="btn-secondary" onclick="prevStep(6)"><i class="fa-solid fa-arrow-left"></i> Editar</button>
+        <button class="btn-success btn-lg" id="submitBtn" onclick="submitForm()">
+          <i class="fa-solid fa-paper-plane"></i> Enviar PQRSF
+        </button>
+      </div>
+    </div>
+
+    <!-- ── STEP 7: Éxito ── -->
+    <div class="step" id="step7">
+      <div class="success-state">
+        <div class="success-anim">
+          <div class="success-circle"><i class="fa-solid fa-check"></i></div>
+        </div>
+        <h2>¡PQRSF registrada exitosamente!</h2>
+        <p>Su solicitud ha sido recibida. Le notificaremos a través del correo registrado en un plazo máximo de <strong>15 días hábiles</strong>.</p>
+        <div class="ticket-box">
+          <span class="ticket-label">Número de radicado</span>
+          <span class="ticket-number" id="ticketNumber">—</span>
+        </div>
+        <button class="btn-primary mt-4" onclick="resetForm()">
+          <i class="fa-solid fa-rotate-right"></i> Registrar otra PQRSF
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /form-container -->
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="footer-inner">
+    <img src="assets/logo.png" alt="Santa Bárbara" class="footer-logo" onerror="this.style.display='none'" />
+    <div>
+      <p><strong>Clínica de Alta Complejidad Santa Bárbara</strong></p>
+      <p>SIAU – Sistema de Información y Atención al Usuario</p>
+    </div>
+    <div class="footer-contact">
+      <a href="mailto:siau.red@cacsantabarbara.co"><i class="fa-solid fa-envelope"></i> siau.red@cacsantabarbara.co</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Supabase JS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

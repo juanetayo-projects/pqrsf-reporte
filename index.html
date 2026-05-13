@@ -258,6 +258,27 @@
           <input type="text" id="colaborador" placeholder="Nombre del colaborador (si aplica)" />
         </div>
 
+        <div class="field-wrap full">
+          <label><i class="fa-solid fa-paperclip"></i> Documento adjunto <span class="optional">(opcional)</span></label>
+          <div class="file-drop" id="fileDrop" onclick="document.getElementById('archivoAdjunto').click()">
+            <i class="fa-solid fa-cloud-arrow-up file-drop-icon"></i>
+            <span>Arrastra un archivo aquí o <strong>haz clic para seleccionar</strong></span>
+            <small>PDF, DOC, DOCX, TXT, PNG, JPG &nbsp;·&nbsp; Máximo 10 MB</small>
+            <input type="file" id="archivoAdjunto"
+              accept=".pdf,.txt,.doc,.docx,.png,.jpg,.jpeg"
+              style="display:none"
+              onchange="handleFileSelect(this)" />
+          </div>
+          <div class="file-preview" id="filePreview" style="display:none">
+            <i class="fa-solid fa-file-circle-check"></i>
+            <span id="filePreviewName"></span>
+            <span id="filePreviewSize" class="file-size"></span>
+            <button type="button" class="file-remove" onclick="removeFile()" title="Quitar archivo">
+              <i class="fa-solid fa-xmark"></i>
+            </button>
+          </div>
+        </div>
+
       </div>
       <div class="step-error" id="err5"></div>
       <div class="step-nav">

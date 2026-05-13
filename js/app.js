@@ -410,7 +410,7 @@ async function submitForm() {
     falla_atributo        : v('falla'),
     especialidad          : v('especialidad'),
     colaborador           : v('colaborador'),
-    correo_proceso        : window._correoProcesso || '',
+    correo_proceso        : procesoCorreoMap[v('proceso')] || window._correoProcesso || '',
     archivo_url           : archivoUrl,
     archivo_nombre        : archivoNombre,
   };

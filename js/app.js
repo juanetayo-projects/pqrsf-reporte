@@ -379,10 +379,9 @@ async function submitForm() {
       archivoNombre = nombre;
     } catch (err) {
       console.error('Upload error:', err);
-      setError('err6', 'Error al subir el archivo. Verifique su conexión.');
-      btn.disabled = false;
-      btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar PQRSF';
-      return;
+      // Advertir pero continuar sin el adjunto
+      archivoUrl    = null;
+      archivoNombre = selectedFile.name + ' (no subido)';
     }
   }
 

@@ -1,83 +1,182 @@
-/* ── Supabase config ────────────────────────────────────────────
-   Reemplaza SUPABASE_URL y SUPABASE_ANON_KEY con los valores
-   de tu proyecto en https://app.supabase.com → Settings → API
-   ─────────────────────────────────────────────────────────── */
 const SUPABASE_URL      = 'https://cdarbygwhtwkdgkelktw.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_hBoCRcO2ozNu8l9lcRSTOw_NHWUZ-Qb';
 
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-/* ── Proceso → Correo mapping ───────────────────────────────── */
-const PROCESO_CORREO = {
-  'Contabilidad': 'directorcontable@cacsantabarbara.com.co',
-  'Control de Infecciones y Vigilancia Epidemiológica': 'coordinacionenfermeria.comiteinfecciones@cacsantabarbara.co',
-  'Docencia Investigación y Gestión del Conocimiento': 'paola.calvo@cacsantabarbara.co',
-  'Gestión Administrativa': 'coordinacion.administrativa@cacsantabarbara.co',
-  'Gestión Ambiental': 'javier.calderon@cacsantabarbara.co',
-  'Gestión Angiografía': 'coordinacionenfermeria.angiografia@cacsantabarbara.co',
-  'Gestión Call center': 'juan.etayo@cacsantabarbara.co',
-  'Gestión Comercial, Riesgo y Aseguramiento': 'evelin.vasquez@cacsantabarbara.co, olga.rada@cacsantabarbara.co, alexander.moreno@cacsantabarbara.co',
-  'Gestión Farmacéutica': 'coordinaciongestionfarmaceutica@cacsantabarbara.co',
-  'Gestión Financiera': 'Camilo.becerra@cacsantabarbara.co',
-  'Gestión Seguridad y Salud en el Trabajo': 'coordinacion.sst@cacsantabarbara.co',
-  'Gestión Sistemas de Información': 'juan.etayo@cacsantabarbara.co',
-  'Gestión TICS': 'juan.etayo@cacsantabarbara.co',
-  'Gestión de Atención Ambulatoria': 'coordinacion.centralespecialistas@cacsantabarbara.co',
-  'Gestión de Calidad': 'maritza.jordan@cacsantabarbara.co, christian.castano@cacsantabarbara.co, gestorcalidad@cacsantabarbara.co',
-  'Gestión de Cartera': 'sara.jaramillo@cacsantabarbara.co',
-  'Gestión de Compras y Suministros': 'andrea.salazar@cacsantabarbara.co',
-  'Gestión de Cuidados Intensivos': 'harold.arboleda@cacsantabarbara.co, coordinacionenfermeria.uci@cacsantabarbara.co',
-  'Gestión de Egreso Seguro': 'egreso.seguro@cacsantabarbara.co, lider.gestiontransversal@cacsantabarbara.co',
-  'Gestión de Esterilización': 'coordinacion.esterilizacion@cacsantabarbara.co',
-  'Gestión de Facturación': 'facturacion.cacsb@cacsantabarbara.co',
-  'Gestión de Glosas y/o Devoluciones': 'dianamarcela.merchan@cacsantabarbara.co',
-  'Gestión de Hospitalización': 'coordinacionenfermeria.hospitalizacion@cacsantabarbara.co, coordinacionmedica.hospitalizacion@cacsantabarbara.co',
-  'Gestión de Hospitalización Parcial': 'coordinacion.hospitalizacionparcial@cacsantabarbara.co',
-  'Gestión de Hospitalización Piso 2': 'coordinacion.hospitalizacionparcial@cacsantabarbara.co, coordinacionmedica.hospitalizacion@cacsantabarbara.co',
-  'Gestión de Hospitalización Piso 7 y 8': 'coordinacionenfermeria.hospitalizacion@cacsantabarbara.co, coordinacionmedica.hospitalizacion@cacsantabarbara.co',
-  'Gestión de Imágenes Diagnosticas': 'coordinacionenfermeria.imagenesycardiologia@cacsantabarbara.co',
-  'Gestión de Ingreso': 'facturacion.cacsb@cacsantabarbara.co',
-  'Gestión Jurídica': 'nataly.cano@cacsantabarbara.co',
-  'Gestión de Mantenimiento e Infraestructura': 'daniel.vasquez@cacsantabarbara.co',
-  'Gestión de Radicación': 'radicación.cacs@cacsantabarbara.co',
-  'Gestión de Referencia y Contrareferencia': 'coordinacion.enfermeriaurgencias@cacsantabarbara.co, lider.referencia@cacsantabarbara.co',
-  'Gestión de Tesorería': 'sandra.baeza@cacsantabarbara.co',
-  'Gestión de Urgencias Adulto': 'coordinacion.enfermeriaurgencias@cacsantabarbara.co, angelica.arizabaleta@cacsantabarbara.co',
-  'Gestión de la Atención Quirúrgica': 'coordinacionenfermeria.cirugia@cacsantabarbara.co, carlos.dallos@cacsantabarbara.co',
-  'Gestión de la Experiencia en la Atención': 'siau.red@cacsantabarbara.co, luz.correa@cacsantabarbara.co, lider.gestiontransversal@cacsantabarbara.co',
-  'Gestión de la Investigación': 'coordinaciongestionclinica@cacsantabarbara.co',
-  'Gestión de Servicios Asistenciales': 'angela.zapata@cacsantabarbara.co, catalina.romero@cacsantabarbara.co',
-  'Gestión del Apoyo Terapéutico': 'coordinacionrehabilitacion.cacsb@cacsantabarbara.co',
-  'Gestión del Talento Humano': 'luzangela.castano@cacsantabarbara.co',
-  'Laboratorio Clínico': 'isgleidis.rodriguez@cacsantabarbara.co, natalia.azcarate@cacsantabarbara.co',
-  'Logística de Transportes': 'alberto.gallego@cacsantabarbara.co',
-  'Seguridad del Paciente': 'coordinacion.seguridaddelpaciente@cacsantabarbara.co',
-  'Gestión de Urgencias Pediatría': 'angelica.arizabaleta@cacsantabarbara.co, catalina.romero@cacsantabarbara.co',
-  'Mantenimiento Biomedico': 'sara.chilito@cacsantabarbara.co',
+/* ── UI config para cards (no viene de BD) ──────────────────── */
+const TIPO_REPORTE_UI = {
+  'Petición':     { icon: 'fa-file-lines',          color: 'blue',   desc: 'Solicitud de información, documentos o actuaciones de la institución' },
+  'Queja':        { icon: 'fa-triangle-exclamation', color: 'orange', desc: 'Manifestación de inconformidad por la prestación del servicio' },
+  'Reclamo':      { icon: 'fa-gavel',               color: 'red',    desc: 'Exigencia de un derecho que se considera vulnerado o desconocido' },
+  'Sugerencia':   { icon: 'fa-lightbulb',           color: 'green',  desc: 'Propuesta para mejorar los procesos o servicios de la institución' },
+  'Felicitación': { icon: 'fa-star',                color: 'gold',   desc: 'Reconocimiento por una experiencia positiva o excelente atención' },
 };
+
+const TIPO_USUARIO_UI = {
+  'Paciente':    { icon: 'fa-bed-pulse' },
+  'Familiar':    { icon: 'fa-people-group' },
+  'Asegurador':  { icon: 'fa-shield-halved' },
+};
+
+/* ── Mapa proceso → correo (se llena al cargar listas) ─────── */
+let procesoCorreoMap = {};
 
 /* ── State ─────────────────────────────────────────────────── */
 let currentStep = 0;
 const TOTAL_STEPS = 6;
 
 /* ── Init ──────────────────────────────────────────────────── */
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   buildStepDots();
-  // Set today as default for fecha_manifestacion
+
   const today = new Date().toISOString().split('T')[0];
   document.getElementById('fecha_manifestacion').value = today;
   document.getElementById('fecha_apertura').value = today;
 
-  // Char counter
-  const desc = document.getElementById('descripcion');
-  desc.addEventListener('input', () => {
-    const n = Math.min(desc.value.length, 1000);
+  document.getElementById('descripcion').addEventListener('input', function () {
+    const n = Math.min(this.value.length, 1000);
     document.getElementById('charCount').textContent = n;
-    if (n >= 1000) desc.value = desc.value.slice(0, 1000);
+    if (n >= 1000) this.value = this.value.slice(0, 1000);
   });
+
+  await loadListas();
 });
 
+/* ── Cargar todas las listas desde Supabase ─────────────────── */
+async function loadListas() {
+  try {
+    const [
+      { data: tipos },
+      { data: entidades },
+      { data: sedes },
+      { data: procesos },
+      { data: fuentes },
+      { data: usuarios },
+      { data: convenios },
+      { data: regimenes },
+      { data: fallas },
+    ] = await Promise.all([
+      db.from('lista_tipo_reporte').select('nombre').eq('activo', true).order('orden'),
+      db.from('lista_entidades').select('nombre').eq('activo', true).order('orden'),
+      db.from('lista_sedes').select('nombre').eq('activo', true).order('orden'),
+      db.from('lista_procesos').select('nombre,correo').eq('activo', true).order('orden'),
+      db.from('lista_fuentes').select('nombre').eq('activo', true).order('orden'),
+      db.from('lista_tipo_usuario').select('nombre').eq('activo', true).order('orden'),
+      db.from('lista_convenios').select('nombre').eq('activo', true).order('orden'),
+      db.from('lista_regimen').select('nombre').eq('activo', true).order('orden'),
+      db.from('lista_fallas').select('nombre,grupo').eq('activo', true).order('orden'),
+    ]);
+
+    // Cards dinámicas
+    buildTipoReporteCards(tipos || []);
+    buildTipoUsuarioCards(usuarios || []);
+
+    // Mapeo proceso → correo
+    procesoCorreoMap = {};
+    (procesos || []).forEach(p => { procesoCorreoMap[p.nombre] = p.correo || ''; });
+
+    // Selects simples
+    fillSelect('entidad',  entidades  || []);
+    fillSelect('sede',     sedes      || []);
+    fillSelect('proceso',  procesos   || []);
+    fillSelect('fuente',   fuentes    || []);
+    fillSelect('convenio', convenios  || []);
+    fillSelect('regimen',  regimenes  || []);
+
+    // Select fallas con optgroups
+    fillSelectGrouped('falla', fallas || []);
+
+  } catch (err) {
+    console.error('Error cargando listas:', err);
+  }
+}
+
+/* ── Poblar select simple ───────────────────────────────────── */
+function fillSelect(id, items) {
+  const sel = document.getElementById(id);
+  if (!sel) return;
+  sel.innerHTML = '<option value="">— Seleccione —</option>';
+  items.forEach(item => {
+    const opt = document.createElement('option');
+    opt.value = item.nombre;
+    opt.textContent = item.nombre;
+    sel.appendChild(opt);
+  });
+}
+
+/* ── Poblar select agrupado (fallas) ───────────────────────── */
+function fillSelectGrouped(id, items) {
+  const sel = document.getElementById(id);
+  if (!sel) return;
+  sel.innerHTML = '<option value="">— Seleccione —</option>';
+
+  const grupos = {};
+  items.forEach(item => {
+    const g = item.grupo || 'Otros';
+    if (!grupos[g]) grupos[g] = [];
+    grupos[g].push(item.nombre);
+  });
+
+  Object.entries(grupos).forEach(([grupo, opciones]) => {
+    const og = document.createElement('optgroup');
+    og.label = grupo;
+    opciones.forEach(nombre => {
+      const opt = document.createElement('option');
+      opt.value = nombre;
+      opt.textContent = nombre;
+      og.appendChild(opt);
+    });
+    sel.appendChild(og);
+  });
+}
+
+/* ── Cards tipo de reporte ──────────────────────────────────── */
+function buildTipoReporteCards(items) {
+  const grid = document.getElementById('tipoReporteGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  items.forEach((item, i) => {
+    const ui = TIPO_REPORTE_UI[item.nombre] || { icon: 'fa-circle-dot', color: 'blue', desc: '' };
+    const id = `tipo-${i}`;
+    grid.innerHTML += `
+      <label class="type-card" for="${id}">
+        <input type="radio" name="tipo_reporte" id="${id}" value="${item.nombre}" />
+        <div class="type-card-inner">
+          <div class="type-icon ${ui.color}"><i class="fa-solid ${ui.icon}"></i></div>
+          <h3>${item.nombre}</h3>
+          <p>${ui.desc}</p>
+        </div>
+      </label>`;
+  });
+}
+
+/* ── Cards tipo usuario ─────────────────────────────────────── */
+function buildTipoUsuarioCards(items) {
+  const grid = document.getElementById('tipoUsuarioGrid');
+  if (!grid) return;
+  grid.innerHTML = '';
+  items.forEach((item, i) => {
+    const ui = TIPO_USUARIO_UI[item.nombre] || { icon: 'fa-user' };
+    const id = `u-${i}`;
+    grid.innerHTML += `
+      <label class="user-card" for="${id}">
+        <input type="radio" name="tipo_usuario" id="${id}" value="${item.nombre}" />
+        <div class="user-card-inner">
+          <i class="fa-solid ${ui.icon}"></i>
+          <span>${item.nombre}</span>
+        </div>
+      </label>`;
+  });
+}
+
+/* ── Auto-fill correo al cambiar proceso ────────────────────── */
+function autoFillCorreo() {
+  const proceso = document.getElementById('proceso').value;
+  window._correoProcesso = procesoCorreoMap[proceso] || '';
+}
+
+/* ── Progress & dots ────────────────────────────────────────── */
 function buildStepDots() {
   const wrap = document.getElementById('stepIndicator');
   wrap.innerHTML = '';
@@ -99,7 +198,7 @@ function updateProgress(step) {
   }
 }
 
-/* ── Navigation ────────────────────────────────────────────── */
+/* ── Navegación ─────────────────────────────────────────────── */
 function startForm() {
   document.getElementById('hero').style.display = 'none';
   document.getElementById('formSection').style.display = 'block';
@@ -115,14 +214,8 @@ function showStep(n) {
   updateProgress(n);
 }
 
-function clearError(id) {
-  const el = document.getElementById(id);
-  if (el) el.textContent = '';
-}
-function setError(id, msg) {
-  const el = document.getElementById(id);
-  if (el) el.textContent = '⚠ ' + msg;
-}
+function clearError(id) { const el = document.getElementById(id); if (el) el.textContent = ''; }
+function setError(id, msg) { const el = document.getElementById(id); if (el) el.textContent = '⚠ ' + msg; }
 
 function nextStep(fromStep) {
   clearError(`err${fromStep}`);
@@ -137,43 +230,40 @@ function prevStep(fromStep) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
-/* ── Validation ────────────────────────────────────────────── */
+/* ── Validación ─────────────────────────────────────────────── */
 function validateStep(n) {
   switch (n) {
     case 1: {
-      const v = document.querySelector('input[name="tipo_reporte"]:checked');
-      if (!v) { setError('err1', 'Por favor seleccione el tipo de PQRSF.'); return false; }
+      if (!document.querySelector('input[name="tipo_reporte"]:checked'))
+        return setError('err1', 'Por favor seleccione el tipo de PQRSF.'), false;
       return true;
     }
     case 2: {
-      const e = v('entidad'), s = v('sede'), p = v('proceso'), f = v('fecha_manifestacion'), fu = v('fuente');
-      if (!e) { setError('err2', 'Seleccione la entidad.'); return false; }
-      if (!s) { setError('err2', 'Seleccione la sede.'); return false; }
-      if (!p) { setError('err2', 'Seleccione el proceso o servicio.'); return false; }
-      if (!f) { setError('err2', 'Ingrese la fecha de la manifestación.'); return false; }
-      if (!fu) { setError('err2', 'Seleccione la fuente.'); return false; }
+      if (!v('entidad'))            return setError('err2', 'Seleccione la entidad.'), false;
+      if (!v('sede'))               return setError('err2', 'Seleccione la sede.'), false;
+      if (!v('proceso'))            return setError('err2', 'Seleccione el proceso o servicio.'), false;
+      if (!v('fecha_manifestacion'))return setError('err2', 'Ingrese la fecha de la manifestación.'), false;
+      if (!v('fuente'))             return setError('err2', 'Seleccione la fuente.'), false;
       return true;
     }
     case 3: {
-      const u = document.querySelector('input[name="tipo_usuario"]:checked');
-      if (!u) { setError('err3', 'Seleccione el tipo de usuario.'); return false; }
-      if (!v('convenio')) { setError('err3', 'Seleccione el convenio / EPS.'); return false; }
-      if (!v('regimen'))  { setError('err3', 'Seleccione el régimen.'); return false; }
+      if (!document.querySelector('input[name="tipo_usuario"]:checked'))
+        return setError('err3', 'Seleccione el tipo de usuario.'), false;
+      if (!v('convenio')) return setError('err3', 'Seleccione el convenio / EPS.'), false;
+      if (!v('regimen'))  return setError('err3', 'Seleccione el régimen.'), false;
       return true;
     }
     case 4: {
-      if (!v('nombre_paciente')) { setError('err4', 'Ingrese el nombre y apellido del paciente.'); return false; }
-      if (!v('numero_id'))       { setError('err4', 'Ingrese el número de identificación.'); return false; }
+      if (!v('nombre_paciente')) return setError('err4', 'Ingrese el nombre y apellido del paciente.'), false;
+      if (!v('numero_id'))       return setError('err4', 'Ingrese el número de identificación.'), false;
       const email = v('email_reporta');
-      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-        setError('err4', 'El correo electrónico no tiene un formato válido.');
-        return false;
-      }
+      if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email))
+        return setError('err4', 'El correo electrónico no tiene un formato válido.'), false;
       return true;
     }
     case 5: {
-      if (!v('descripcion')) { setError('err5', 'Ingrese la descripción de su PQRSF.'); return false; }
-      if (!v('falla'))       { setError('err5', 'Seleccione la falla o atributo identificado.'); return false; }
+      if (!v('descripcion')) return setError('err5', 'Ingrese la descripción de su PQRSF.'), false;
+      if (!v('falla'))       return setError('err5', 'Seleccione la falla o atributo identificado.'), false;
       return true;
     }
     default: return true;
@@ -185,48 +275,39 @@ function v(id) {
   return el ? el.value.trim() : '';
 }
 
-/* ── Auto-fill correo ───────────────────────────────────────── */
-function autoFillCorreo() {
-  const proceso = v('proceso');
-  // stored internally, used on submit
-  window._correoProcesso = PROCESO_CORREO[proceso] || '';
-}
-
-/* ── Build summary ──────────────────────────────────────────── */
+/* ── Resumen ────────────────────────────────────────────────── */
 function buildSummary() {
-  const tipo     = document.querySelector('input[name="tipo_reporte"]:checked')?.value || '';
-  const usuario  = document.querySelector('input[name="tipo_usuario"]:checked')?.value  || '';
+  const tipo    = document.querySelector('input[name="tipo_reporte"]:checked')?.value || '';
+  const usuario = document.querySelector('input[name="tipo_usuario"]:checked')?.value  || '';
 
   const fields = [
-    { label: 'Tipo de PQRSF',          value: tipo,                          full: false },
-    { label: 'Entidad',                 value: v('entidad'),                  full: false },
-    { label: 'Sede',                    value: v('sede'),                     full: false },
-    { label: 'Proceso / Servicio',      value: v('proceso'),                  full: false },
-    { label: 'Fecha de manifestación',  value: formatDate(v('fecha_manifestacion')), full: false },
-    { label: 'Fuente',                  value: v('fuente'),                   full: false },
-    { label: 'Tipo de usuario',         value: usuario,                       full: false },
-    { label: 'Convenio / EPS',          value: v('convenio'),                 full: false },
-    { label: 'Régimen',                 value: v('regimen'),                  full: false },
-    { label: 'Nombre del paciente',     value: v('nombre_paciente'),          full: false },
-    { label: 'Identificación',          value: v('numero_id'),                full: false },
-    { label: 'Teléfono',                value: v('telefono') || '—',          full: false },
-    { label: 'Email reportante',        value: v('email_reporta') || '—',     full: false },
-    { label: 'Especialidad',            value: v('especialidad') || '—',      full: false },
-    { label: 'Falla / Atributo',        value: v('falla'),                    full: true  },
-    { label: 'Descripción',             value: v('descripcion'),              full: true  },
+    { label: 'Tipo de PQRSF',         value: tipo,                          full: false },
+    { label: 'Entidad',                value: v('entidad'),                  full: false },
+    { label: 'Sede',                   value: v('sede'),                     full: false },
+    { label: 'Proceso / Servicio',     value: v('proceso'),                  full: false },
+    { label: 'Fecha manifestación',    value: formatDate(v('fecha_manifestacion')), full: false },
+    { label: 'Fuente',                 value: v('fuente'),                   full: false },
+    { label: 'Tipo de usuario',        value: usuario,                       full: false },
+    { label: 'Convenio / EPS',         value: v('convenio'),                 full: false },
+    { label: 'Régimen',                value: v('regimen'),                  full: false },
+    { label: 'Nombre del paciente',    value: v('nombre_paciente'),          full: false },
+    { label: 'Identificación',         value: v('numero_id'),                full: false },
+    { label: 'Teléfono',               value: v('telefono') || '—',          full: false },
+    { label: 'Email reportante',       value: v('email_reporta') || '—',     full: false },
+    { label: 'Especialidad',           value: v('especialidad') || '—',      full: false },
+    { label: 'Falla / Atributo',       value: v('falla'),                    full: true  },
+    { label: 'Descripción',            value: v('descripcion'),              full: true  },
   ];
 
-  const html = fields.map(f =>
+  document.getElementById('summaryContent').innerHTML = fields.map(f =>
     `<div class="summary-item${f.full ? ' full' : ''}">
        <div class="s-label">${f.label}</div>
        <div class="s-value">${escHtml(f.value)}</div>
      </div>`
   ).join('');
-
-  document.getElementById('summaryContent').innerHTML = html;
 }
 
-/* ── Submit ─────────────────────────────────────────────────── */
+/* ── Envío ──────────────────────────────────────────────────── */
 async function submitForm() {
   const btn = document.getElementById('submitBtn');
   btn.disabled = true;
@@ -235,30 +316,29 @@ async function submitForm() {
 
   const tipo    = document.querySelector('input[name="tipo_reporte"]:checked')?.value || '';
   const usuario = document.querySelector('input[name="tipo_usuario"]:checked')?.value  || '';
-  const now     = new Date().toISOString();
 
   const payload = {
-    timestamp:           now,
-    tipo_reporte:        tipo,
-    entidad:             v('entidad'),
-    sede:                v('sede'),
-    proceso:             v('proceso'),
-    fecha_manifestacion: v('fecha_manifestacion') || null,
-    fuente:              v('fuente'),
-    fecha_apertura:      v('fecha_apertura') || null,
-    tipo_usuario:        usuario,
-    convenio_eps:        v('convenio'),
-    regimen:             v('regimen'),
-    nombre_paciente:     v('nombre_paciente'),
+    timestamp:             new Date().toISOString(),
+    tipo_reporte:          tipo,
+    entidad:               v('entidad'),
+    sede:                  v('sede'),
+    proceso:               v('proceso'),
+    fecha_manifestacion:   v('fecha_manifestacion') || null,
+    fuente:                v('fuente'),
+    fecha_apertura:        v('fecha_apertura') || null,
+    tipo_usuario:          usuario,
+    convenio_eps:          v('convenio'),
+    regimen:               v('regimen'),
+    nombre_paciente:       v('nombre_paciente'),
     numero_identificacion: v('numero_id'),
-    direccion:           v('direccion'),
-    telefono:            v('telefono'),
-    email_reporta:       v('email_reporta'),
-    descripcion:         v('descripcion'),
-    falla_atributo:      v('falla'),
-    especialidad:        v('especialidad'),
-    colaborador:         v('colaborador'),
-    correo_proceso:      window._correoProcesso || '',
+    direccion:             v('direccion'),
+    telefono:              v('telefono'),
+    email_reporta:         v('email_reporta'),
+    descripcion:           v('descripcion'),
+    falla_atributo:        v('falla'),
+    especialidad:          v('especialidad'),
+    colaborador:           v('colaborador'),
+    correo_proceso:        window._correoProcesso || '',
   };
 
   try {
@@ -270,8 +350,8 @@ async function submitForm() {
 
     if (error) throw error;
 
-    const ticket = `PQRSF-${String(data?.id || Date.now()).padStart(6, '0')}`;
-    document.getElementById('ticketNumber').textContent = ticket;
+    document.getElementById('ticketNumber').textContent =
+      `PQRSF-${String(data?.id || Date.now()).padStart(6, '0')}`;
     showStep(7);
     updateProgress(TOTAL_STEPS + 1);
 
@@ -286,7 +366,7 @@ async function submitForm() {
 /* ── Reset ──────────────────────────────────────────────────── */
 function resetForm() {
   document.querySelectorAll('input[type=radio]').forEach(r => r.checked = false);
-  document.querySelectorAll('input[type=text], input[type=email], input[type=tel], input[type=date], textarea, select')
+  document.querySelectorAll('input[type=text], input[type=email], input[type=tel], textarea, select')
     .forEach(el => { el.value = el.tagName === 'SELECT' ? '' : ''; });
 
   const today = new Date().toISOString().split('T')[0];
@@ -308,6 +388,6 @@ function formatDate(iso) {
 }
 function escHtml(s) {
   return String(s)
-    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    .replace(/&/g, '&amp;').replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }

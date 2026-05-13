@@ -550,6 +550,14 @@ function resetForm() {
   renderProcesoTags();
   document.querySelectorAll('#procesoDropdown input[type=checkbox]').forEach(cb => { cb.checked = false; });
   window._correoProcesso = '';
+
+  // Restaurar botón de envío por si quedó deshabilitado o con spinner
+  const submitBtn = document.getElementById('submitBtn');
+  if (submitBtn) {
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar PQRSF';
+  }
+
   removeFile();
 
   document.getElementById('hero').style.display        = '';

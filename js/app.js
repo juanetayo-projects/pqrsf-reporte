@@ -512,16 +512,22 @@ async function submitForm() {
     const radicado = `PQRSF-${String(data.id).padStart(6, '0')}`;
     document.getElementById('ticketNumber').textContent = radicado;
 
-    // ── 3. Enviar correo de notificación ──────────────────
+    // ── 3. Enviar correo de notificación (no bloqueante, máx 6 s) ──
     if (payload.correo_proceso) {
       btn.innerHTML = '<span class="spinner"></span> Enviando notificación…';
+      const mailTimeout = new Promise((_, rej) =>
+        setTimeout(() => rej(new Error('timeout')), 6000)
+      );
       try {
-        await db.functions.invoke('notify-pqrsf', {
-          body: { reporte: { ...payload, id: data.id } },
-        });
+        await Promise.race([
+          db.functions.invoke('notify-pqrsf', {
+            body: { reporte: { ...payload, id: data.id } },
+          }),
+          mailTimeout,
+        ]);
       } catch (mailErr) {
-        console.warn('Notificación no enviada:', mailErr);
-        // No bloqueamos el flujo si el correo falla
+        console.warn('Notificación no enviada:', mailErr.message);
+        // No bloqueamos el flujo si el correo falla o se agota el tiempo
       }
     }
 

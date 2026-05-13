@@ -21,6 +21,7 @@ const TIPO_USUARIO_UI = {
 
 /* ── Estado ─────────────────────────────────────────────────── */
 let procesoCorreoMap = {};
+let procesoSelected  = [];          // multi-select: nombres seleccionados
 let selectedFile     = null;
 let currentStep      = 0;
 const TOTAL_STEPS    = 6;
@@ -127,6 +128,7 @@ async function loadListas() {
       { data: convenios },
       { data: regimenes },
       { data: fallas },
+      { data: especialidadesData },
     ] = await Promise.all([
       db.from('lista_tipo_reporte').select('nombre').eq('activo', true).order('orden'),
       db.from('lista_entidades'   ).select('nombre').eq('activo', true).order('orden'),
@@ -137,6 +139,7 @@ async function loadListas() {
       db.from('lista_convenios'   ).select('nombre').eq('activo', true).order('orden'),
       db.from('lista_regimen'     ).select('nombre').eq('activo', true).order('orden'),
       db.from('lista_fallas'      ).select('nombre,grupo').eq('activo', true).order('orden'),
+      db.from('especialidades'    ).select('nombre').eq('activo', true).order('nombre'),
     ]);
 
     buildTipoReporteCards(tipos   || []);
@@ -147,11 +150,12 @@ async function loadListas() {
 
     fillSelect('entidad',  entidades  || []);
     fillSelect('sede',     sedes      || []);
-    fillSelect('proceso',  procesos   || []);
+    buildProcesoDropdown(procesos     || []);
     fillSelect('fuente',   fuentes    || []);
     fillSelect('convenio', convenios  || []);
     fillSelect('regimen',  regimenes  || []);
     fillSelectGrouped('falla', fallas || []);
+    fillSelect('especialidad', especialidadesData || []);
 
   } catch (err) {
     console.error('Error cargando listas:', err);
@@ -228,8 +232,89 @@ function buildTipoUsuarioCards(items) {
 }
 
 function autoFillCorreo() {
-  const proceso = document.getElementById('proceso')?.value || '';
-  window._correoProcesso = procesoCorreoMap[proceso] || '';
+  // driven by procesoSelected — takes the first selected proceso's correo
+  window._correoProcesso = procesoSelected.length
+    ? (procesoCorreoMap[procesoSelected[0]] || '')
+    : '';
+}
+
+/* ── Multi-select Proceso ───────────────────────────────────── */
+function toggleMultiDrop(field) {
+  const dd    = document.getElementById(field + 'Dropdown');
+  const arrow = document.getElementById(field + 'Arrow');
+  if (!dd) return;
+  const isOpen = dd.classList.contains('open');
+  if (isOpen) {
+    dd.classList.remove('open');
+    if (arrow) arrow.classList.remove('open');
+  } else {
+    dd.classList.add('open');
+    if (arrow) arrow.classList.add('open');
+    setTimeout(() => {
+      document.addEventListener('click', function closeMs(e) {
+        const wrap = document.getElementById(field + 'Ms');
+        if (wrap && !wrap.contains(e.target)) {
+          dd.classList.remove('open');
+          if (arrow) arrow.classList.remove('open');
+          document.removeEventListener('click', closeMs);
+        }
+      });
+    }, 0);
+  }
+}
+
+function buildProcesoDropdown(procesos) {
+  const dd = document.getElementById('procesoDropdown');
+  if (!dd) return;
+  dd.innerHTML = '';
+  if (!procesos.length) {
+    dd.innerHTML = '<div class="ms-empty">Sin opciones disponibles</div>';
+    return;
+  }
+  procesos.forEach(p => {
+    const lbl = document.createElement('label');
+    lbl.className = 'ms-item';
+    const cb = document.createElement('input');
+    cb.type = 'checkbox';
+    cb.value = p.nombre;
+    cb.addEventListener('change', () => onProcesoCheck(cb));
+    lbl.appendChild(cb);
+    lbl.appendChild(document.createTextNode(' ' + p.nombre));
+    dd.appendChild(lbl);
+  });
+}
+
+function onProcesoCheck(cb) {
+  if (cb.checked) {
+    if (!procesoSelected.includes(cb.value)) procesoSelected.push(cb.value);
+  } else {
+    procesoSelected = procesoSelected.filter(s => s !== cb.value);
+  }
+  renderProcesoTags();
+  autoFillCorreo();
+}
+
+function renderProcesoTags() {
+  const el = document.getElementById('procesoTags');
+  if (!el) return;
+  if (!procesoSelected.length) {
+    el.innerHTML = '<span class="ms-placeholder">— Seleccione uno o más —</span>';
+  } else {
+    el.innerHTML = procesoSelected.map(s =>
+      `<span class="ms-tag">${escHtml(s)}<button type="button" class="ms-tag-remove" onclick="removeProcesoTag(this,event)" data-val="${escHtml(s)}"><i class="fa-solid fa-xmark"></i></button></span>`
+    ).join('');
+  }
+}
+
+function removeProcesoTag(btn, e) {
+  e.stopPropagation();
+  const val = btn.dataset.val;
+  procesoSelected = procesoSelected.filter(s => s !== val);
+  const cb = [...document.querySelectorAll('#procesoDropdown input[type=checkbox]')]
+    .find(c => c.value === val);
+  if (cb) cb.checked = false;
+  renderProcesoTags();
+  autoFillCorreo();
 }
 
 /* ── Progress ───────────────────────────────────────────────── */
@@ -296,7 +381,7 @@ function validateStep(n) {
     case 2:
       if (!v('entidad'))             return setError('err2','Seleccione la entidad.'), false;
       if (!v('sede'))                return setError('err2','Seleccione la sede.'), false;
-      if (!v('proceso'))             return setError('err2','Seleccione el proceso o servicio.'), false;
+      if (!procesoSelected.length)   return setError('err2','Seleccione al menos un proceso o servicio.'), false;
       if (!v('fecha_manifestacion')) return setError('err2','Ingrese la fecha de la manifestación.'), false;
       if (!v('fuente'))              return setError('err2','Seleccione la fuente.'), false;
       return true;
@@ -313,8 +398,9 @@ function validateStep(n) {
         return setError('err4','El correo electrónico no tiene formato válido.'), false;
       return true;
     case 5:
-      if (!v('descripcion')) return setError('err5','Ingrese la descripción de su PQRSF.'), false;
-      if (!v('falla'))       return setError('err5','Seleccione la falla o atributo identificado.'), false;
+      if (!v('descripcion'))  return setError('err5','Ingrese la descripción de su PQRSF.'), false;
+      if (!v('falla'))        return setError('err5','Seleccione la falla o atributo identificado.'), false;
+      if (!v('colaborador'))  return setError('err5','Ingrese el nombre del colaborador involucrado.'), false;
       return true;
     default: return true;
   }
@@ -334,7 +420,7 @@ function buildSummary() {
     { label: 'Tipo de PQRSF',       value: tipo,                            full: false },
     { label: 'Entidad',             value: v('entidad'),                    full: false },
     { label: 'Sede',                value: v('sede'),                       full: false },
-    { label: 'Proceso / Servicio',  value: v('proceso'),                    full: false },
+    { label: 'Proceso / Servicio',  value: procesoSelected.join(', ') || '—', full: false },
     { label: 'Fecha manifestación', value: formatDate(v('fecha_manifestacion')), full: false },
     { label: 'Fuente',              value: v('fuente'),                     full: false },
     { label: 'Tipo de usuario',     value: usuario,                         full: false },
@@ -393,7 +479,7 @@ async function submitForm() {
     tipo_reporte          : tipo,
     entidad               : v('entidad'),
     sede                  : v('sede'),
-    proceso               : v('proceso'),
+    proceso               : procesoSelected.join(', '),
     fecha_manifestacion   : v('fecha_manifestacion') || null,
     fuente                : v('fuente'),
     fecha_apertura        : v('fecha_apertura') || null,
@@ -409,7 +495,7 @@ async function submitForm() {
     falla_atributo        : v('falla'),
     especialidad          : v('especialidad'),
     colaborador           : v('colaborador'),
-    correo_proceso        : procesoCorreoMap[v('proceso')] || window._correoProcesso || '',
+    correo_proceso        : window._correoProcesso || (procesoSelected.length ? procesoCorreoMap[procesoSelected[0]] : '') || '',
     archivo_url           : archivoUrl,
     archivo_nombre        : archivoNombre,
   };
@@ -460,6 +546,9 @@ function resetForm() {
   document.getElementById('fecha_manifestacion').value = today;
   document.getElementById('fecha_apertura').value      = today;
   document.getElementById('charCount').textContent     = '0';
+  procesoSelected = [];
+  renderProcesoTags();
+  document.querySelectorAll('#procesoDropdown input[type=checkbox]').forEach(cb => { cb.checked = false; });
   window._correoProcesso = '';
   removeFile();
 

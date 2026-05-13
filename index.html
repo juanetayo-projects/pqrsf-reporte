@@ -102,10 +102,14 @@
 
         <div class="field-wrap">
           <label><i class="fa-solid fa-sitemap"></i> Proceso / Servicio <span class="req">*</span></label>
-          <div class="select-wrap">
-            <select id="proceso" required onchange="autoFillCorreo()">
-              <option value="">— Cargando… —</option>
-            </select>
+          <div class="ms-wrap" id="procesoMs">
+            <div class="ms-trigger" id="procesoTrigger" onclick="toggleMultiDrop('proceso')">
+              <div class="ms-tags" id="procesoTags">
+                <span class="ms-placeholder">— Seleccione uno o más —</span>
+              </div>
+              <i class="fa-solid fa-chevron-down ms-arrow" id="procesoArrow"></i>
+            </div>
+            <div class="ms-dropdown" id="procesoDropdown"></div>
           </div>
         </div>
 
@@ -250,12 +254,16 @@
 
         <div class="field-wrap">
           <label><i class="fa-solid fa-stethoscope"></i> Especialidad</label>
-          <input type="text" id="especialidad" placeholder="Ej: Cardiología, Urgencias…" />
+          <div class="select-wrap">
+            <select id="especialidad">
+              <option value="">— Cargando… —</option>
+            </select>
+          </div>
         </div>
 
         <div class="field-wrap">
-          <label><i class="fa-solid fa-user-nurse"></i> Colaborador involucrado</label>
-          <input type="text" id="colaborador" placeholder="Nombre del colaborador (si aplica)" />
+          <label><i class="fa-solid fa-user-nurse"></i> Colaborador involucrado <span class="req">*</span></label>
+          <input type="text" id="colaborador" placeholder="Nombre del colaborador" required />
         </div>
 
         <div class="field-wrap full">

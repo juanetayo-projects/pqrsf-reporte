@@ -512,11 +512,12 @@ async function submitForm() {
     const radicado = `PQRSF-${String(data.id).padStart(6, '0')}`;
     document.getElementById('ticketNumber').textContent = radicado;
 
-    // ── 3. Enviar correo de notificación (no bloqueante, máx 6 s) ──
-    if (payload.correo_proceso) {
+    // ── 3. Enviar correo de notificación (no bloqueante, máx 8 s) ──
+    // Dispara si hay correo_proceso (analistas) O email_reporta (paciente)
+    if (payload.correo_proceso || payload.email_reporta) {
       btn.innerHTML = '<span class="spinner"></span> Enviando notificación…';
       const mailTimeout = new Promise((_, rej) =>
-        setTimeout(() => rej(new Error('timeout')), 6000)
+        setTimeout(() => rej(new Error('timeout')), 8000)
       );
       try {
         await Promise.race([

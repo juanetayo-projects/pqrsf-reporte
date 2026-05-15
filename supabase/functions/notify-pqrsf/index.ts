@@ -2,8 +2,9 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY') ?? '';
 const FROM_EMAIL     = Deno.env.get('FROM_EMAIL') ?? 'PQRSF Santa Bárbara <notificaciones@cacsantabarbara.co>';
-const APP_URL        = 'https://juanetayo-projects.github.io/pqrsf-reporte/';
-const LOGO_URL       = 'https://juanetayo-projects.github.io/pqrsf-reporte/assets/logo-wide.png';
+const APP_URL_REPORTE  = 'https://juanetayo-projects.github.io/pqrsf-reporte/';
+const APP_URL_RESPUESTA = 'https://juanetayo-projects.github.io/pqrsf-respuesta/';
+const LOGO_URL         = 'https://juanetayo-projects.github.io/pqrsf-reporte/assets/logo-wide.png';
 
 const CORS = {
   'Access-Control-Allow-Origin' : '*',
@@ -123,11 +124,11 @@ function buildAnalistaHtml(r: Record<string, string>): string {
     </div>
     <div style="text-align:center;padding:0 44px 36px;">
       <p style="font-size:13px;color:#6b7280;margin:0 0 16px;">
-        Gestione esta solicitud a través del sistema PQRSF de la clínica.
+        Ingrese al sistema para gestionar y responder esta solicitud.
       </p>
-      <a href="${APP_URL}" style="display:inline-block;background:#1a4f9b;color:#ffffff;
+      <a href="${APP_URL_RESPUESTA}" style="display:inline-block;background:#1a4f9b;color:#ffffff;
                text-decoration:none;padding:12px 30px;border-radius:8px;font-size:14px;font-weight:600;">
-        Ver sistema PQRSF &rarr;
+        Responder PQRSF &rarr;
       </a>
     </div>
     ${footer()}
@@ -198,7 +199,7 @@ function buildPacienteHtml(r: Record<string, string>): string {
     </div>
 
     <div style="text-align:center;padding:0 44px 36px;">
-      <a href="${APP_URL}" style="display:inline-block;background:#1a4f9b;color:#ffffff;
+      <a href="${APP_URL_REPORTE}" style="display:inline-block;background:#1a4f9b;color:#ffffff;
                text-decoration:none;padding:12px 30px;border-radius:8px;font-size:14px;font-weight:600;">
         Radicar nueva PQRSF &rarr;
       </a>

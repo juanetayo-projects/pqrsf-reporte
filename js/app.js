@@ -254,15 +254,23 @@ function buildFallaDropdown(items) {
     opciones.forEach(nombre => {
       const nivel = FALLA_SEMAFORO[nombre] ?? 'verde';
       const cfg   = SEMAFORO_CFG[nivel];
-      html += `<div class="falla-cs-item" onclick="selectFalla(this,${JSON.stringify(nombre)})"
+      // Usar data-value en vez de onclick con JSON.stringify (evita rotura por comillas/tildes)
+      html += `<div class="falla-cs-item" data-value="${nombre.replace(/"/g,'&quot;')}"
                     style="--dot:${cfg.dot};--bg:${cfg.bg};--fg:${cfg.color}">
-        <span class="falla-cs-dot"></span>
-        <span class="falla-cs-label">${nombre}</span>
-        <span class="falla-cs-nivel">${cfg.label}</span>
+        <span class="falla-cs-badge">
+          <span class="falla-cs-dot"></span>
+          ${nombre}
+        </span>
       </div>`;
     });
   });
   dd.innerHTML = html;
+
+  // Event delegation — un solo listener para todo el dropdown
+  dd.addEventListener('click', function handler(e) {
+    const item = e.target.closest('.falla-cs-item');
+    if (item) selectFalla(item.dataset.value);
+  }, { once: false });
 }
 
 function toggleFallaDD() {
@@ -281,7 +289,7 @@ function closeFallaOutside(e) {
   }
 }
 
-function selectFalla(el, nombre) {
+function selectFalla(nombre) {
   document.getElementById('falla').value = nombre;
   const nivel = FALLA_SEMAFORO[nombre] ?? 'verde';
   const cfg   = SEMAFORO_CFG[nivel];
@@ -292,7 +300,6 @@ function selectFalla(el, nombre) {
   </span>`;
   document.getElementById('fallaDropdown').classList.remove('open');
   document.getElementById('fallaArrow').classList.remove('rotated');
-  // Limpiar error si había
   const errEl = document.getElementById('err5');
   if (errEl) errEl.classList.remove('visible');
 }

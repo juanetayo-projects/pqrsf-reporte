@@ -19,6 +19,49 @@ const TIPO_USUARIO_UI = {
   'Asegurador' : { icon: 'fa-shield-halved' },
 };
 
+/* ── Semaforización de fallas ───────────────────────────────── */
+const FALLA_SEMAFORO = {
+  '1. Caída del sistema'                                                          : 'verde',
+  '1. Cambio de Profesional'                                                      : 'verde',
+  '1. No entrega de Resultados'                                                   : 'verde',
+  '1. No responde el contact center'                                              : 'verde',
+  '1. Retraso en admisión'                                                        : 'verde',
+  '1. Servicio no contratado'                                                     : 'verde',
+  '1. Servicio no disponible en la sede'                                          : 'verde',
+  '1. Valor elevado en tarifa (cuota moderadora, copago, cotización particular)'  : 'amarillo',
+  '2. Administración tardía de medicamentos y/o conductas'                        : 'amarillo',
+  '2. Demora en los trámites de remisión'                                         : 'amarillo',
+  '2. Inoportunidad en la programación de ayudas diagnostica intrahospitalarias'  : 'amarillo',
+  '2. No disponibilidad de agenda'                                                : 'verde',
+  '2. No recibió llamada de retorno'                                              : 'verde',
+  '2. Recurso limitado'                                                           : 'amarillo',
+  '2. Reprogramación de cita o turno'                                             : 'verde',
+  '2. Retraso en la atención'                                                     : 'amarillo',
+  '2. Retraso en la entrega de resultados'                                        : 'verde',
+  '2. Retraso en la programación de procedimientos'                               : 'verde',
+  '2. Retraso en la respuesta interconsulta'                                      : 'verde',
+  '3. Daño en infraestructura'                                                    : 'verde',
+  '3. Identificación incorrecta del paciente'                                     : 'amarillo',
+  '3. Limpieza'                                                                   : 'verde',
+  '3. Procedimiento asistencial inapropiado'                                      : 'amarillo',
+  '4. Errores en formulas'                                                        : 'verde',
+  '4. Inconformidad con tratamiento'                                              : 'rojo',
+  '4. Información Errada'                                                         : 'rojo',
+  '4. Retraso en autorización home care'                                          : 'amarillo',
+  '5. Falta de información al paciente para su intervención'                      : 'rojo',
+  '6. Calidad/cantidad en la alimentación'                                        : 'verde',
+  '6. Disposición y flexibilidad de quien le atiende'                             : 'verde',
+  '6. Instalaciones no confortables'                                              : 'amarillo',
+  '6. Ruido'                                                                      : 'amarillo',
+  '6. Trato humanizado'                                                           : 'rojo',
+  '7. Felicitaciones'                                                             : 'verde',
+};
+const SEMAFORO_CFG = {
+  verde   : { bg:'#dcfce7', color:'#15803d', dot:'#16a34a', label:'Verde'    },
+  amarillo: { bg:'#fef9c3', color:'#92400e', dot:'#ca8a04', label:'Amarillo' },
+  rojo    : { bg:'#fee2e2', color:'#991b1b', dot:'#dc2626', label:'Rojo'     },
+};
+
 /* ── Estado ─────────────────────────────────────────────────── */
 let procesoCorreoMap = {};
 let procesoSelected  = [];          // multi-select: nombres seleccionados
@@ -154,7 +197,7 @@ async function loadListas() {
     fillSelect('fuente',   fuentes    || []);
     fillSelect('convenio', convenios  || []);
     fillSelect('regimen',  regimenes  || []);
-    fillSelectGrouped('falla', fallas || []);
+    buildFallaDropdown(fallas || []);
     fillSelect('especialidad', especialidadesData || []);
 
   } catch (err) {
@@ -193,6 +236,76 @@ function fillSelectGrouped(id, items) {
     });
     sel.appendChild(og);
   });
+}
+
+/* ── Dropdown de falla con semaforización ────────────────────── */
+function buildFallaDropdown(items) {
+  const dd = document.getElementById('fallaDropdown');
+  if (!dd) return;
+  const grupos = {};
+  items.forEach(item => {
+    const g = item.grupo || 'Otros';
+    if (!grupos[g]) grupos[g] = [];
+    grupos[g].push(item.nombre);
+  });
+  let html = '';
+  Object.entries(grupos).forEach(([grupo, opciones]) => {
+    html += `<div class="falla-cs-group">${grupo}</div>`;
+    opciones.forEach(nombre => {
+      const nivel = FALLA_SEMAFORO[nombre] ?? 'verde';
+      const cfg   = SEMAFORO_CFG[nivel];
+      html += `<div class="falla-cs-item" onclick="selectFalla(this,${JSON.stringify(nombre)})"
+                    style="--dot:${cfg.dot};--bg:${cfg.bg};--fg:${cfg.color}">
+        <span class="falla-cs-dot"></span>
+        <span class="falla-cs-label">${nombre}</span>
+        <span class="falla-cs-nivel">${cfg.label}</span>
+      </div>`;
+    });
+  });
+  dd.innerHTML = html;
+}
+
+function toggleFallaDD() {
+  const dd    = document.getElementById('fallaDropdown');
+  const arrow = document.getElementById('fallaArrow');
+  const open  = dd.classList.contains('open');
+  dd.classList.toggle('open', !open);
+  arrow.classList.toggle('rotated', !open);
+  if (!open) setTimeout(() => document.addEventListener('click', closeFallaOutside, { once: true }), 50);
+}
+
+function closeFallaOutside(e) {
+  if (!document.getElementById('fallaWrap')?.contains(e.target)) {
+    document.getElementById('fallaDropdown')?.classList.remove('open');
+    document.getElementById('fallaArrow')?.classList.remove('rotated');
+  }
+}
+
+function selectFalla(el, nombre) {
+  document.getElementById('falla').value = nombre;
+  const nivel = FALLA_SEMAFORO[nombre] ?? 'verde';
+  const cfg   = SEMAFORO_CFG[nivel];
+  const disp  = document.getElementById('fallaDisplay');
+  disp.className = '';
+  disp.innerHTML = `<span class="falla-cs-sel" style="--dot:${cfg.dot};--bg:${cfg.bg};--fg:${cfg.color}">
+    <span class="falla-cs-dot"></span>${nombre}
+  </span>`;
+  document.getElementById('fallaDropdown').classList.remove('open');
+  document.getElementById('fallaArrow').classList.remove('rotated');
+  // Limpiar error si había
+  const errEl = document.getElementById('err5');
+  if (errEl) errEl.classList.remove('visible');
+}
+
+function fallaColorBadge(falla) {
+  if (!falla) return '—';
+  const nivel = FALLA_SEMAFORO[falla];
+  if (!nivel) return falla;
+  const cfg = SEMAFORO_CFG[nivel];
+  return `<span style="display:inline-flex;align-items:center;gap:5px;background:${cfg.bg};
+    color:${cfg.color};padding:2px 10px 2px 6px;border-radius:99px;font-size:12px;font-weight:600;white-space:normal;line-height:1.4">
+    <span style="width:8px;height:8px;border-radius:50%;background:${cfg.dot};flex-shrink:0;display:inline-block"></span>${falla}
+  </span>`;
 }
 
 function buildTipoReporteCards(items) {

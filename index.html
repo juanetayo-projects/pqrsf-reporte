@@ -245,10 +245,13 @@
 
         <div class="field-wrap full">
           <label><i class="fa-solid fa-circle-exclamation"></i> Falla o atributo identificado <span class="req">*</span></label>
-          <div class="select-wrap">
-            <select id="falla" required>
-              <option value="">— Cargando… —</option>
-            </select>
+          <div class="falla-cs-wrap" id="fallaWrap">
+            <div class="falla-cs-trigger" id="fallaTrigger" onclick="toggleFallaDD()">
+              <span id="fallaDisplay" class="falla-cs-placeholder">— Seleccione la falla o atributo —</span>
+              <i class="fa-solid fa-chevron-down falla-cs-arrow" id="fallaArrow"></i>
+            </div>
+            <div class="falla-cs-dropdown" id="fallaDropdown"></div>
+            <input type="hidden" id="falla" value=""/>
           </div>
         </div>
 

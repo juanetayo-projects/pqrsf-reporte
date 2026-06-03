@@ -198,12 +198,6 @@ function buildPacienteHtml(r: Record<string, string>): string {
       </div>
     </div>
 
-    <div style="text-align:center;padding:0 44px 36px;">
-      <a href="${APP_URL_REPORTE}" style="display:inline-block;background:#1a4f9b;color:#ffffff;
-               text-decoration:none;padding:12px 30px;border-radius:8px;font-size:14px;font-weight:600;">
-        Radicar nueva PQRSF &rarr;
-      </a>
-    </div>
     ${footer()}
   </div>
 </body></html>`;

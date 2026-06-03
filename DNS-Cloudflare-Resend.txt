@@ -1,0 +1,79 @@
+================================================================
+  CONFIGURACIÓN DNS EN CLOUDFLARE PARA ENVÍO DE CORREOS
+  Sistema PQRSF – Clínica de Alta Complejidad Santa Bárbara
+  Fecha: 13/05/2026
+================================================================
+
+OBJETIVO
+--------
+Agregar 3 registros DNS en Cloudflare para el dominio cacsantabarbara.co
+que permiten al sistema PQRSF enviar correos de notificación automáticos
+a través del servicio Resend (proveedor de correo transaccional).
+
+ACCESO
+------
+Panel de Cloudflare: https://dash.cloudflare.com
+Dominio a configurar: cacsantabarbara.co
+Ruta: DNS → Records → Add record
+
+================================================================
+REGISTRO 1 – DKIM (Autenticación de correo)
+================================================================
+
+  Tipo (Type)    : TXT
+  Nombre (Name)  : resend._domainkey
+  Contenido      : p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCypfIMIjBTiQ
+                   f0o6ylnhH8l9HrSZurliOFTbRKSmZl4pIvSLCtzPWnJXnOFqOw0m
+                   SHW288N2WKt94DKgWFf+bRDcVQ8C/fD8wVsqnUlKxwPwIjINgikC
+                   JYKdNaDsgKBrzzoohyrUTtEhSwyF0Mu7mRiDgvgUXK/NWrofAOLuJ
+                   TLwIDAQAB
+  TTL            : Auto
+  Proxy          : DESACTIVADO (nube gris – "DNS only", NO naranja)
+
+  CONTENIDO COMPLETO (copiar exactamente, sin espacios adicionales):
+  p=MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCypfIMIjBTiQf0o6ylnhH8l9HrSZurliOFTbRKSmZl4pIvSLCtzPWnJXnOFqOw0mSHW288N2WKt94DKgWFf+bRDcVQ8C/fD8wVsqnUlKxwPwIjINgikCJYKdNaDsgKBrzzoohyrUTtEhSwyF0Mu7mRiDgvgUXK/NWrofAOLuJTLwIDAQAB
+
+================================================================
+REGISTRO 2 – SPF Bounce (MX)
+================================================================
+
+  Tipo (Type)    : MX
+  Nombre (Name)  : send
+  Servidor       : feedback-smtp.us-east-1.amazonses.com
+  TTL            : Auto
+  Prioridad      : 10
+
+================================================================
+REGISTRO 3 – SPF Autorizacion de envío (TXT)
+================================================================
+
+  Tipo (Type)    : TXT
+  Nombre (Name)  : send
+  Contenido      : v=spf1 include:amazonses.com ~all
+  TTL            : Auto
+
+================================================================
+NOTAS IMPORTANTES
+================================================================
+
+1. El Registro 1 (DKIM) debe tener el proxy DESACTIVADO (nube gris).
+   Si queda en modo "Proxied" (nube naranja) fallará la verificación.
+
+2. Los 3 registros deben agregarse exactamente como se indica.
+   No modificar mayúsculas, minúsculas ni caracteres especiales.
+
+3. Una vez agregados los 3 registros, notificar a:
+   juan.etayo@cacsantabarbara.co
+   para que realice la verificación final en el panel de Resend
+   (https://resend.com → Domains → cacsantabarbara.co →
+   botón "Verify DNS Records").
+
+4. La propagación DNS puede tardar entre 5 y 60 minutos.
+
+================================================================
+CONTACTO DE REFERENCIA TÉCNICA
+================================================================
+  Sistema     : PQRSF – Clínica Santa Bárbara
+  Responsable : Juan Carlos Etayo
+  Correo      : juan.etayo@cacsantabarbara.co
+================================================================

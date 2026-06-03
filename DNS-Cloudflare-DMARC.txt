@@ -1,0 +1,113 @@
+================================================================
+  CONFIGURACIÓN DNS EN CLOUDFLARE – REGISTRO DMARC
+  Sistema PQRSF – Clínica de Alta Complejidad Santa Bárbara
+  Fecha: 15/05/2026
+================================================================
+
+OBJETIVO
+--------
+Agregar el registro DMARC al dominio cacsantabarbara.co para
+mejorar la entregabilidad de los correos automáticos del sistema
+PQRSF y evitar que lleguen a la carpeta de SPAM.
+
+El registro DMARC complementa los registros DKIM y SPF ya
+configurados previamente, completando las tres capas de
+autenticación de correo exigidas por Gmail, Outlook y otros
+proveedores.
+
+ACCESO
+------
+Panel de Cloudflare : https://dash.cloudflare.com
+Dominio             : cacsantabarbara.co
+Ruta                : DNS → Records → Add record
+
+================================================================
+REGISTRO ÚNICO A AGREGAR – DMARC
+================================================================
+
+  Tipo (Type)    : TXT
+  Nombre (Name)  : _dmarc
+  Contenido      : v=DMARC1; p=none; rua=mailto:juan.etayo@cacsantabarbara.co
+  TTL            : Auto
+  Proxy          : DESACTIVADO (nube gris – "DNS only", NO naranja)
+
+  CONTENIDO COMPLETO (copiar exactamente):
+  v=DMARC1; p=none; rua=mailto:juan.etayo@cacsantabarbara.co
+
+================================================================
+EXPLICACIÓN DE LOS PARÁMETROS
+================================================================
+
+  v=DMARC1        Versión del protocolo (obligatorio).
+
+  p=none          Política en modo monitoreo: los correos que
+                  fallen la validación NO se rechazan ni van a
+                  cuarentena. Solo se reportan. Es el modo más
+                  seguro para comenzar.
+
+  rua=mailto:...  Dirección donde Resend/Gmail enviarán informes
+                  XML periódicos con estadísticas de autenticación.
+                  Permite detectar si alguien está suplantando el
+                  dominio.
+
+================================================================
+ESTADOS DE LA POLÍTICA (p=)
+================================================================
+
+  Fase 1 – Monitoreo (actual)   p=none
+    → Los correos fluyen normalmente. Se recopilan reportes.
+    → Recomendado durante las primeras 2–4 semanas.
+
+  Fase 2 – Cuarentena           p=quarantine
+    → Correos sospechosos van a SPAM en lugar de rechazarse.
+    → Activar si los reportes confirman que el dominio es legítimo.
+
+  Fase 3 – Rechazo total        p=reject
+    → Correos no autenticados son rechazados por el servidor.
+    → Máxima protección. Activar solo cuando p=quarantine
+      funcione sin incidencias durante 2–4 semanas.
+
+  Para avanzar de fase, simplemente editar el registro DMARC
+  y cambiar p=none → p=quarantine → p=reject.
+
+================================================================
+REGISTROS DNS YA CONFIGURADOS (referencia)
+================================================================
+
+  ✅ DKIM  TXT  resend._domainkey.cacsantabarbara.co
+           Autenticación de firma digital en cada correo enviado.
+
+  ✅ SPF   MX   send.cacsantabarbara.co
+           Servidor autorizado para recibir rebotes.
+
+  ✅ SPF   TXT  send.cacsantabarbara.co
+           v=spf1 include:amazonses.com ~all
+
+  ⬜ DMARC TXT  _dmarc.cacsantabarbara.co  ← PENDIENTE (este archivo)
+
+================================================================
+NOTAS IMPORTANTES
+================================================================
+
+1. El nombre del registro es exactamente "_dmarc" (con guion bajo).
+   No agregar el dominio al nombre; Cloudflare lo añade
+   automáticamente → quedará como _dmarc.cacsantabarbara.co
+
+2. El proxy debe estar DESACTIVADO (nube gris).
+   Los registros TXT de autenticación de correo no deben
+   estar proxiados por Cloudflare.
+
+3. La propagación DNS puede tardar entre 5 y 30 minutos.
+
+4. Una vez agregado, los reportes DMARC llegarán al correo
+   juan.etayo@cacsantabarbara.co en formato XML.
+   Servicios como https://dmarcian.com permiten leerlos
+   de forma visual y gratuita.
+
+================================================================
+CONTACTO DE REFERENCIA TÉCNICA
+================================================================
+  Sistema     : PQRSF – Clínica Santa Bárbara
+  Responsable : Juan Carlos Etayo
+  Correo      : juan.etayo@cacsantabarbara.co
+================================================================

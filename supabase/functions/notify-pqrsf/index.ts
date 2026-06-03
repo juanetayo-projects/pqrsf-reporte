@@ -19,6 +19,37 @@ const TIPO_COLOR: Record<string, string> = {
   'Felicitación': '#ca8a04',
 };
 
+/* ── Semaforización de fallas ───────────────────────────────── */
+const FALLA_SEMAFORO: Record<string, string> = {
+  '1. Caída del sistema':'verde','1. Cambio de Profesional':'verde',
+  '1. No entrega de Resultados':'verde','1. No responde el contact center':'verde',
+  '1. Retraso en admisión':'verde','1. Servicio no contratado':'verde',
+  '1. Servicio no disponible en la sede':'verde',
+  '1. Valor elevado en tarifa (cuota moderadora, copago, cotización particular)':'amarillo',
+  '2. Administración tardía de medicamentos y/o conductas':'amarillo',
+  '2. Demora en los trámites de remisión':'amarillo',
+  '2. Inoportunidad en la programación de ayudas diagnostica intrahospitalarias':'amarillo',
+  '2. No disponibilidad de agenda':'verde','2. No recibió llamada de retorno':'verde',
+  '2. Recurso limitado':'amarillo','2. Reprogramación de cita o turno':'verde',
+  '2. Retraso en la atención':'amarillo','2. Retraso en la entrega de resultados':'verde',
+  '2. Retraso en la programación de procedimientos':'verde',
+  '2. Retraso en la respuesta interconsulta':'verde',
+  '3. Daño en infraestructura':'verde','3. Identificación incorrecta del paciente':'amarillo',
+  '3. Limpieza':'verde','3. Procedimiento asistencial inapropiado':'amarillo',
+  '4. Errores en formulas':'verde','4. Inconformidad con tratamiento':'rojo',
+  '4. Información Errada':'rojo','4. Retraso en autorización home care':'amarillo',
+  '5. Falta de información al paciente para su intervención':'rojo',
+  '6. Calidad/cantidad en la alimentación':'verde',
+  '6. Disposición y flexibilidad de quien le atiende':'verde',
+  '6. Instalaciones no confortables':'amarillo','6. Ruido':'amarillo',
+  '6. Trato humanizado':'rojo','7. Felicitaciones':'verde',
+};
+const SEMAFORO_STYLE: Record<string, {bg:string;color:string;dot:string}> = {
+  verde   : { bg:'#dcfce7', color:'#15803d', dot:'#16a34a' },
+  amarillo: { bg:'#fef9c3', color:'#92400e', dot:'#ca8a04' },
+  rojo    : { bg:'#fee2e2', color:'#991b1b', dot:'#dc2626' },
+};
+
 /* ── Encabezado común ───────────────────────────────────────── */
 function header(): string {
   return `
@@ -58,6 +89,26 @@ function row(label: string, value: string | null | undefined): string {
                border-bottom:1px solid #f3f4f6;vertical-align:top;">${label}</td>
     <td style="padding:9px 0 9px 14px;font-size:13px;color:#111827;
                border-bottom:1px solid #f3f4f6;vertical-align:top;">${value}</td>
+  </tr>`;
+}
+
+function fallaRow(falla: string | null | undefined): string {
+  if (!falla) return '';
+  const nivel = FALLA_SEMAFORO[falla] ?? null;
+  const st    = nivel ? SEMAFORO_STYLE[nivel] : null;
+  const badge = st
+    ? `<span style="display:inline-flex;align-items:center;gap:6px;background:${st.bg};
+         color:${st.color};padding:4px 12px 4px 8px;border-radius:6px;
+         font-size:13px;font-weight:600;line-height:1.4;">
+         <span style="width:9px;height:9px;border-radius:50%;background:${st.dot};
+                      flex-shrink:0;display:inline-block;"></span>${falla}
+       </span>`
+    : falla;
+  return `
+  <tr>
+    <td style="padding:9px 0;font-size:13px;font-weight:600;color:#6b7280;width:42%;
+               border-bottom:1px solid #f3f4f6;vertical-align:top;">Falla / Atributo</td>
+    <td style="padding:9px 0 9px 14px;border-bottom:1px solid #f3f4f6;vertical-align:top;">${badge}</td>
   </tr>`;
 }
 
@@ -107,7 +158,7 @@ function buildAnalistaHtml(r: Record<string, string>): string {
         ${row('Identificación',      r.numero_identificacion)}
         ${row('Teléfono',            r.telefono)}
         ${row('Email reportante',    r.email_reporta)}
-        ${row('Falla / Atributo',    r.falla_atributo)}
+        ${fallaRow(r.falla_atributo)}
         ${row('Especialidad',        r.especialidad)}
         ${row('Colaborador',         r.colaborador)}
         ${r.archivo_nombre ? row('Documento adjunto',

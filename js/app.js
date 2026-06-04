@@ -521,6 +521,8 @@ function validateStep(n) {
       if (!v('descripcion'))  return setError('err5','Ingrese la descripción de su PQRSF.'), false;
       if (!v('falla'))        return setError('err5','Seleccione la falla o atributo identificado.'), false;
       if (!v('colaborador'))  return setError('err5','Ingrese el nombre del colaborador involucrado.'), false;
+      if (!v('dias_habiles') || parseInt(v('dias_habiles'),10) < 1)
+        return setError('err5','Ingrese los días hábiles para responder (mínimo 1).'), false;
       return true;
     default: return true;
   }
@@ -553,6 +555,7 @@ function buildSummary() {
     { label: 'Especialidad',        value: v('especialidad') || '—',        full: false },
     { label: 'Documento adjunto',   value: selectedFile ? selectedFile.name : '—', full: false },
     { label: 'Falla / Atributo',    value: v('falla'),                      full: true  },
+    { label: 'Días hábiles para responder', value: v('dias_habiles') ? `${v('dias_habiles')} días` : '—', full: false },
     { label: 'Descripción',         value: v('descripcion'),                full: true  },
   ];
 
@@ -615,6 +618,7 @@ async function submitForm() {
     falla_atributo        : v('falla'),
     especialidad          : v('especialidad'),
     colaborador           : v('colaborador'),
+    dias_habiles          : parseInt(v('dias_habiles'), 10) || null,
     correo_proceso        : window._correoProcesso || (procesoSelected.length ? procesoCorreoMap[procesoSelected[0]] : '') || '',
     archivo_url           : archivoUrl,
     archivo_nombre        : archivoNombre,

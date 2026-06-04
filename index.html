@@ -269,6 +269,12 @@
           <input type="text" id="colaborador" placeholder="Nombre del colaborador" required />
         </div>
 
+        <div class="field-wrap">
+          <label><i class="fa-solid fa-calendar-days"></i> Días hábiles para responder <span class="req">*</span></label>
+          <input type="number" id="dias_habiles" min="1" max="90" step="1"
+                 placeholder="Ej. 15" autocomplete="off" required />
+        </div>
+
         <div class="field-wrap full">
           <label><i class="fa-solid fa-paperclip"></i> Documento adjunto <span class="optional">(opcional)</span></label>
           <div class="file-drop" id="fileDrop" onclick="document.getElementById('archivoAdjunto').click()">

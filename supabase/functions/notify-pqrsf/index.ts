@@ -159,6 +159,7 @@ function buildAnalistaHtml(r: Record<string, string>): string {
         ${row('Teléfono',            r.telefono)}
         ${row('Email reportante',    r.email_reporta)}
         ${fallaRow(r.falla_atributo)}
+        ${r.dias_habiles ? row('Días hábiles para responder', r.dias_habiles + ' días') : ''}
         ${row('Especialidad',        r.especialidad)}
         ${row('Colaborador',         r.colaborador)}
         ${r.archivo_nombre ? row('Documento adjunto',

@@ -74,6 +74,11 @@ const TOTAL_STEPS    = 6;
 
 /* ── Init ──────────────────────────────────────────────────── */
 document.addEventListener('DOMContentLoaded', async () => {
+  // Guard: exige sesión iniciada antes de mostrar el formulario
+  const session = await requireAuth();
+  if (!session) return;
+  document.getElementById('headerUserEmail').textContent = session.user.email;
+
   buildStepDots();
 
   const today = new Date().toISOString().split('T')[0];
@@ -334,6 +339,10 @@ function buildTipoReporteCards(items) {
         </div>
       </label>`;
   });
+  // Seleccionar un tipo avanza automáticamente al paso 2 (sin botón "Siguiente")
+  grid.addEventListener('change', e => {
+    if (e.target.name === 'tipo_reporte') nextStep(1);
+  });
 }
 
 function buildTipoUsuarioCards(items) {
@@ -440,6 +449,21 @@ function removeProcesoTag(btn, e) {
   autoFillCorreo();
 }
 
+/* ── Plazo de respuesta (checkbox exclusivo) ───────────────────── */
+function onPlazoCheck(cb) {
+  if (cb.checked) {
+    document.querySelectorAll('input[name="plazo_respuesta"]').forEach(other => {
+      if (other !== cb) other.checked = false;
+    });
+    const errEl = document.getElementById('err5');
+    if (errEl) errEl.textContent = '';
+  }
+}
+
+function getPlazoSeleccionado() {
+  return document.querySelector('input[name="plazo_respuesta"]:checked')?.value || '';
+}
+
 /* ── Progress ───────────────────────────────────────────────── */
 function buildStepDots() {
   const wrap = document.getElementById('stepIndicator');
@@ -524,8 +548,8 @@ function validateStep(n) {
       if (!v('descripcion'))  return setError('err5','Ingrese la descripción de su PQRSF.'), false;
       if (!v('falla'))        return setError('err5','Seleccione la falla o atributo identificado.'), false;
       if (!v('colaborador'))  return setError('err5','Ingrese el nombre del colaborador involucrado.'), false;
-      if (!v('dias_habiles') || parseInt(v('dias_habiles'),10) < 1)
-        return setError('err5','Ingrese los días hábiles para responder (mínimo 1).'), false;
+      if (!getPlazoSeleccionado())
+        return setError('err5','Seleccione el plazo de días hábiles para responder.'), false;
       return true;
     default: return true;
   }
@@ -558,7 +582,7 @@ function buildSummary() {
     { label: 'Especialidad',        value: v('especialidad') || '—',        full: false },
     { label: 'Documento adjunto',   value: selectedFile ? selectedFile.name : '—', full: false },
     { label: 'Falla / Atributo',    value: v('falla'),                      full: true  },
-    { label: 'Días hábiles para responder', value: v('dias_habiles') ? `${v('dias_habiles')} días` : '—', full: false },
+    { label: 'Días hábiles para responder', value: getPlazoSeleccionado() || '—', full: false },
     { label: 'Descripción',         value: v('descripcion'),                full: true  },
   ];
 
@@ -631,7 +655,7 @@ async function submitForm() {
     falla_atributo        : v('falla'),
     especialidad          : v('especialidad'),
     colaborador           : v('colaborador'),
-    dias_habiles          : parseInt(v('dias_habiles'), 10) || null,
+    dias_habiles          : getPlazoSeleccionado() || null,
     correo_proceso        : window._correoProcesso || (procesoSelected.length ? procesoCorreoMap[procesoSelected[0]] : '') || '',
     archivo_url           : archivoUrl,
     archivo_nombre        : archivoNombre,
@@ -694,6 +718,7 @@ async function submitForm() {
 /* ── Reset ──────────────────────────────────────────────────── */
 function resetForm() {
   document.querySelectorAll('input[type=radio]').forEach(r => r.checked = false);
+  document.querySelectorAll('input[name="plazo_respuesta"]').forEach(cb => cb.checked = false);
   document.querySelectorAll('input[type=text],input[type=email],input[type=tel],textarea,select')
     .forEach(el => { el.value = ''; });
 

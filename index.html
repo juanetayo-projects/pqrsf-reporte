@@ -1,375 +1,117 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Reporte PQRSF – Clínica Santa Bárbara</title>
-  <link rel="stylesheet" href="css/styles.css" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro PQRSF – Clínica Santa Bárbara</title>
+  <link rel="stylesheet" href="css/login.css"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 </head>
 <body>
-
-<!-- ── HEADER ─────────────────────────────────────────────────── -->
-<header class="site-header">
-  <div class="header-inner">
-    <img src="assets/logo-wide.png" alt="Clínica de Alta Complejidad Santa Bárbara" class="logo" onerror="this.src='assets/logo.png'" />
-    <div class="header-text">
-      <span class="header-tag">Sistema PQRSF</span>
-      <span class="header-subtitle">Peticiones · Quejas · Reclamos · Sugerencias · Felicitaciones</span>
+  <div class="login-bg">
+    <div class="login-left">
+      <img src="assets/logo-wide.png" alt="Santa Bárbara" class="login-logo" onerror="this.src='assets/logo.png'"/>
+      <h1>Registro de<br><span>PQRSF</span></h1>
+      <p>Sistema para el registro de Peticiones, Quejas, Reclamos, Sugerencias y Felicitaciones de la institución.</p>
+      <div class="login-features">
+        <div class="feat"><i class="fa-solid fa-file-circle-plus"></i><span>Registro guiado paso a paso</span></div>
+        <div class="feat"><i class="fa-solid fa-paperclip"></i><span>Adjuntar documentos de soporte</span></div>
+        <div class="feat"><i class="fa-solid fa-bell"></i><span>Notificación automática al proceso</span></div>
+        <div class="feat"><i class="fa-solid fa-shield-halved"></i><span>Acceso seguro y controlado</span></div>
+      </div>
     </div>
-  </div>
-</header>
 
-<!-- ── HERO ───────────────────────────────────────────────────── -->
-<section class="hero" id="hero">
-  <div class="hero-content">
-    <div class="hero-icon"><i class="fa-solid fa-comments"></i></div>
-    <h1>Su opinión nos importa</h1>
-    <p>Diligencie el formulario para registrar su PQRSF. Nos comprometemos a dar respuesta oportuna y a mejorar continuamente nuestro servicio.</p>
-    <button class="btn-primary btn-lg" onclick="startForm()">
-      <i class="fa-solid fa-play"></i> Iniciar registro
-    </button>
-  </div>
-  <div class="hero-cards">
-    <div class="type-preview" data-type="Petición"><i class="fa-solid fa-file-lines"></i><span>Petición</span></div>
-    <div class="type-preview" data-type="Queja"><i class="fa-solid fa-triangle-exclamation"></i><span>Queja</span></div>
-    <div class="type-preview" data-type="Reclamo"><i class="fa-solid fa-gavel"></i><span>Reclamo</span></div>
-    <div class="type-preview" data-type="Sugerencia"><i class="fa-solid fa-lightbulb"></i><span>Sugerencia</span></div>
-    <div class="type-preview" data-type="Felicitación"><i class="fa-solid fa-star"></i><span>Felicitación</span></div>
-  </div>
-</section>
-
-<!-- ── FORM WIZARD ────────────────────────────────────────────── -->
-<section class="form-section" id="formSection" style="display:none">
-  <div class="form-container">
-
-    <!-- Progress bar -->
-    <div class="progress-wrap">
-      <div class="progress-bar" id="progressBar"></div>
-    </div>
-    <div class="step-indicator" id="stepIndicator"></div>
-
-    <!-- ── STEP 1: Tipo de PQRSF ── -->
-    <div class="step active" id="step1">
-      <div class="step-header">
-        <div class="step-num">1</div>
-        <div>
-          <h2>¿Qué tipo de PQRSF desea registrar?</h2>
-          <p>Seleccione la opción que mejor describa su solicitud</p>
+    <div class="login-right">
+      <div class="login-card">
+        <div class="login-card-header">
+          <i class="fa-solid fa-lock"></i>
+          <h2>Acceso al sistema</h2>
+          <p>Ingrese sus credenciales institucionales</p>
         </div>
-      </div>
-      <div class="type-grid" id="tipoReporteGrid">
-        <div class="loading-cards"><i class="fa-solid fa-spinner fa-spin"></i> Cargando opciones…</div>
-      </div>
-      <div class="step-error" id="err1"></div>
-      <div class="step-nav">
-        <span></span>
-        <button class="btn-primary" onclick="nextStep(1)">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
-      </div>
-    </div>
 
-    <!-- ── STEP 2: Información institucional ── -->
-    <div class="step" id="step2">
-      <div class="step-header">
-        <div class="step-num">2</div>
-        <div>
-          <h2>Información institucional</h2>
-          <p>Indíquenos a qué entidad, sede y proceso corresponde su manifestación</p>
-        </div>
-      </div>
-      <div class="form-grid">
-
-        <div class="field-wrap full">
-          <label><i class="fa-solid fa-hospital"></i> Entidad que recibe la PQRSF <span class="req">*</span></label>
-          <div class="select-wrap">
-            <select id="entidad" required>
-              <option value="">— Cargando… —</option>
-            </select>
+        <form id="loginForm" onsubmit="doLogin(event)">
+          <div class="login-field">
+            <label><i class="fa-solid fa-envelope"></i> Correo electrónico</label>
+            <input type="email" id="loginEmail" placeholder="usuario@cacsantabarbara.co" required autocomplete="username"/>
           </div>
-          <div class="field-img"><i class="fa-solid fa-building-shield"></i></div>
-        </div>
-
-        <div class="field-wrap">
-          <label><i class="fa-solid fa-location-dot"></i> Sede <span class="req">*</span></label>
-          <div class="select-wrap">
-            <select id="sede" required>
-              <option value="">— Cargando… —</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="field-wrap">
-          <label><i class="fa-solid fa-sitemap"></i> Proceso / Servicio <span class="req">*</span></label>
-          <div class="ms-wrap" id="procesoMs">
-            <div class="ms-trigger" id="procesoTrigger" onclick="toggleMultiDrop('proceso')">
-              <div class="ms-tags" id="procesoTags">
-                <span class="ms-placeholder">— Seleccione uno o más —</span>
-              </div>
-              <i class="fa-solid fa-chevron-down ms-arrow" id="procesoArrow"></i>
+          <div class="login-field">
+            <label><i class="fa-solid fa-key"></i> Contraseña</label>
+            <div class="pwd-wrap">
+              <input type="password" id="loginPwd" placeholder="••••••••" required autocomplete="current-password"/>
+              <button type="button" class="pwd-toggle" onclick="togglePwd()">
+                <i class="fa-solid fa-eye" id="pwdIcon"></i>
+              </button>
             </div>
-            <div class="ms-dropdown" id="procesoDropdown"></div>
           </div>
-        </div>
 
-        <div class="field-wrap">
-          <label><i class="fa-solid fa-calendar-day"></i> Fecha de la manifestación <span class="req">*</span></label>
-          <input type="date" id="fecha_manifestacion" required />
-        </div>
+          <div class="login-error" id="loginError" style="display:none"></div>
 
-        <div class="field-wrap">
-          <label><i class="fa-solid fa-satellite-dish"></i> Fuente <span class="req">*</span></label>
-          <div class="select-wrap">
-            <select id="fuente" required>
-              <option value="">— Cargando… —</option>
-            </select>
-          </div>
-        </div>
+          <button type="submit" class="btn-login" id="btnLogin">
+            <i class="fa-solid fa-right-to-bracket"></i> Iniciar sesión
+          </button>
 
-        <div class="field-wrap">
-          <label><i class="fa-solid fa-calendar-check"></i> Fecha apertura del buzón</label>
-          <input type="date" id="fecha_apertura" />
-        </div>
-
-      </div>
-      <div class="step-error" id="err2"></div>
-      <div class="step-nav">
-        <button class="btn-secondary" onclick="prevStep(2)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
-        <button class="btn-primary" onclick="nextStep(2)">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
-      </div>
-    </div>
-
-    <!-- ── STEP 3: Tipo de usuario ── -->
-    <div class="step" id="step3">
-      <div class="step-header">
-        <div class="step-num">3</div>
-        <div>
-          <h2>Tipo de usuario</h2>
-          <p>Indíquenos su relación con la institución y su información de aseguramiento</p>
-        </div>
-      </div>
-
-      <div class="user-type-grid" id="tipoUsuarioGrid">
-        <div class="loading-cards"><i class="fa-solid fa-spinner fa-spin"></i> Cargando opciones…</div>
-      </div>
-
-      <div class="form-grid mt-4">
-        <div class="field-wrap">
-          <label><i class="fa-solid fa-handshake"></i> Convenio / EPS <span class="req">*</span></label>
-          <div class="select-wrap">
-            <select id="convenio" required>
-              <option value="">— Cargando… —</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="field-wrap">
-          <label><i class="fa-solid fa-id-card-clip"></i> Régimen <span class="req">*</span></label>
-          <div class="select-wrap">
-            <select id="regimen" required>
-              <option value="">— Cargando… —</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <div class="step-error" id="err3"></div>
-      <div class="step-nav">
-        <button class="btn-secondary" onclick="prevStep(3)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
-        <button class="btn-primary" onclick="nextStep(3)">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
-      </div>
-    </div>
-
-    <!-- ── STEP 4: Datos personales ── -->
-    <div class="step" id="step4">
-      <div class="step-header">
-        <div class="step-num">4</div>
-        <div>
-          <h2>Datos personales</h2>
-          <p>Su información nos permite dar seguimiento a su caso</p>
-        </div>
-      </div>
-      <div class="form-grid">
-
-        <div class="field-wrap full">
-          <label><i class="fa-solid fa-user"></i> Nombre y apellido del paciente <span class="req">*</span></label>
-          <input type="text" id="nombre_paciente" placeholder="Ej: Juan Carlos Pérez García" required autocomplete="off" />
-        </div>
-
-        <div class="field-wrap">
-          <label><i class="fa-solid fa-address-card"></i> Número de identificación <span class="req">*</span></label>
-          <input type="text" id="numero_id" placeholder="Ej: 12345678" required inputmode="numeric" autocomplete="off" />
-        </div>
-
-        <div class="field-wrap">
-          <label><i class="fa-solid fa-phone"></i> Teléfono de contacto</label>
-          <input type="tel" id="telefono" placeholder="Ej: 3001234567" inputmode="numeric" autocomplete="off" />
-        </div>
-
-        <div class="field-wrap full">
-          <label><i class="fa-solid fa-house"></i> Dirección de residencia</label>
-          <input type="text" id="direccion" placeholder="Ej: Calle 10 #5-23, Barrio Centro" autocomplete="off" />
-        </div>
-
-        <div class="field-wrap full">
-          <label><i class="fa-solid fa-envelope"></i> Correo electrónico del reportante</label>
-          <input type="email" id="email_reporta" placeholder="Ej: ejemplo@correo.com" autocomplete="off" />
-          <small class="field-hint">Este correo recibirá las notificaciones sobre su solicitud</small>
-        </div>
-
-      </div>
-      <div class="step-error" id="err4"></div>
-      <div class="step-nav">
-        <button class="btn-secondary" onclick="prevStep(4)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
-        <button class="btn-primary" onclick="nextStep(4)">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
-      </div>
-    </div>
-
-    <!-- ── STEP 5: Descripción ── -->
-    <div class="step" id="step5">
-      <div class="step-header">
-        <div class="step-num">5</div>
-        <div>
-          <h2>Descripción del caso</h2>
-          <p>Cuéntenos en detalle lo ocurrido para poder atender su solicitud</p>
-        </div>
-      </div>
-      <div class="form-grid">
-
-        <div class="field-wrap full">
-          <label><i class="fa-solid fa-pen-to-square"></i> Describa su PQRSF <span class="req">*</span></label>
-          <textarea id="descripcion" rows="5" placeholder="Describa con detalle su petición, queja, reclamo, sugerencia o felicitación…" required></textarea>
-          <div class="char-count"><span id="charCount">0</span> / 1000 caracteres</div>
-        </div>
-
-        <div class="field-wrap full">
-          <label><i class="fa-solid fa-circle-exclamation"></i> Falla o atributo identificado <span class="req">*</span></label>
-          <div class="falla-cs-wrap" id="fallaWrap">
-            <div class="falla-cs-trigger" id="fallaTrigger" onclick="toggleFallaDD()">
-              <span id="fallaDisplay" class="falla-cs-placeholder">— Seleccione la falla o atributo —</span>
-              <i class="fa-solid fa-chevron-down falla-cs-arrow" id="fallaArrow"></i>
-            </div>
-            <div class="falla-cs-dropdown" id="fallaDropdown"></div>
-            <input type="hidden" id="falla" value=""/>
-          </div>
-        </div>
-
-        <div class="field-wrap">
-          <label><i class="fa-solid fa-stethoscope"></i> Especialidad</label>
-          <div class="select-wrap">
-            <select id="especialidad">
-              <option value="">— Cargando… —</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="field-wrap">
-          <label><i class="fa-solid fa-user-nurse"></i> Colaborador involucrado <span class="req">*</span></label>
-          <input type="text" id="colaborador" placeholder="Nombre del colaborador" required />
-        </div>
-
-        <div class="field-wrap">
-          <label><i class="fa-solid fa-calendar-days"></i> Días hábiles para responder <span class="req">*</span></label>
-          <input type="number" id="dias_habiles" min="1" max="90" step="1"
-                 placeholder="Ej. 15" autocomplete="off" required />
-        </div>
-
-        <div class="field-wrap full">
-          <label><i class="fa-solid fa-paperclip"></i> Documento adjunto <span class="optional">(opcional)</span></label>
-          <div class="file-drop" id="fileDrop" onclick="document.getElementById('archivoAdjunto').click()">
-            <i class="fa-solid fa-cloud-arrow-up file-drop-icon"></i>
-            <span>Arrastra un archivo aquí o <strong>haz clic para seleccionar</strong></span>
-            <small>PDF, DOC, DOCX, TXT, PNG, JPG &nbsp;·&nbsp; Máximo 10 MB</small>
-            <input type="file" id="archivoAdjunto"
-              accept=".pdf,.txt,.doc,.docx,.png,.jpg,.jpeg"
-              style="display:none"
-              onchange="handleFileSelect(this)" />
-          </div>
-          <div class="file-preview" id="filePreview" style="display:none">
-            <i class="fa-solid fa-file-circle-check"></i>
-            <span id="filePreviewName"></span>
-            <span id="filePreviewSize" class="file-size"></span>
-            <button type="button" class="file-remove" onclick="removeFile()" title="Quitar archivo">
-              <i class="fa-solid fa-xmark"></i>
+          <div class="forgot-link">
+            <button type="button" onclick="openRecoveryModal()">
+              <i class="fa-solid fa-circle-question"></i> ¿Olvidó su contraseña?
             </button>
           </div>
-        </div>
+        </form>
 
-      </div>
-      <div class="step-error" id="err5"></div>
-      <div class="step-nav">
-        <button class="btn-secondary" onclick="prevStep(5)"><i class="fa-solid fa-arrow-left"></i> Anterior</button>
-        <button class="btn-primary" onclick="nextStep(5)">Revisar <i class="fa-solid fa-arrow-right"></i></button>
-      </div>
-    </div>
-
-    <!-- ── STEP 6: Resumen ── -->
-    <div class="step" id="step6">
-      <div class="step-header">
-        <div class="step-num"><i class="fa-solid fa-check"></i></div>
-        <div>
-          <h2>Resumen de su PQRSF</h2>
-          <p>Verifique la información antes de enviar</p>
+        <div class="login-footer-note">
+          <i class="fa-solid fa-circle-info"></i>
+          Acceso exclusivo para personal autorizado del SIAU.<br>
+          Si no tiene credenciales, contacte al administrador del sistema.
         </div>
       </div>
-      <div id="summaryContent" class="summary-grid"></div>
-      <div class="privacy-note">
-        <i class="fa-solid fa-lock"></i>
-        Sus datos serán tratados de acuerdo con nuestra <strong>Política de Tratamiento de Datos Personales</strong> (Ley 1581 de 2012).
-      </div>
-      <!-- Verificación anti-bots (Cloudflare Turnstile) -->
-      <div class="cf-turnstile" data-sitekey="REEMPLAZAR_CON_TU_SITE_KEY"
-           style="margin:18px 0;display:flex;justify-content:center;"></div>
-
-      <div class="step-error" id="err6"></div>
-      <div class="step-nav">
-        <button class="btn-secondary" onclick="prevStep(6)"><i class="fa-solid fa-arrow-left"></i> Editar</button>
-        <button class="btn-success btn-lg" id="submitBtn" onclick="submitForm()">
-          <i class="fa-solid fa-paper-plane"></i> Enviar PQRSF
-        </button>
-      </div>
-    </div>
-
-    <!-- ── STEP 7: Éxito ── -->
-    <div class="step" id="step7">
-      <div class="success-state">
-        <div class="success-anim">
-          <div class="success-circle"><i class="fa-solid fa-check"></i></div>
-        </div>
-        <h2>¡PQRSF registrada exitosamente!</h2>
-        <p>Su solicitud ha sido recibida. Le notificaremos a través del correo registrado en un plazo máximo de <strong>15 días hábiles</strong>.</p>
-        <div class="ticket-box">
-          <span class="ticket-label">Número de radicado</span>
-          <span class="ticket-number" id="ticketNumber">—</span>
-        </div>
-        <button class="btn-primary mt-4" onclick="resetForm()">
-          <i class="fa-solid fa-rotate-right"></i> Registrar otra PQRSF
-        </button>
-      </div>
-    </div>
-
-  </div><!-- /form-container -->
-</section>
-
-<!-- ── FOOTER ─────────────────────────────────────────────────── -->
-<footer class="site-footer">
-  <div class="footer-inner">
-    <img src="assets/logo.png" alt="Santa Bárbara" class="footer-logo" onerror="this.style.display='none'" />
-    <div>
-      <p><strong>Clínica de Alta Complejidad Santa Bárbara</strong></p>
-      <p>SIAU – Sistema de Información y Atención al Usuario</p>
-    </div>
-    <div class="footer-contact">
-      <a href="mailto:siau.red@cacsantabarbara.co"><i class="fa-solid fa-envelope"></i> siau.red@cacsantabarbara.co</a>
     </div>
   </div>
-</footer>
 
-<!-- Supabase JS SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<!-- Cloudflare Turnstile (CAPTCHA) -->
-<script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
-<script src="js/app.js"></script>
+  <!-- Modal recuperación de contraseña -->
+  <div class="recovery-backdrop" id="recoveryBackdrop" onclick="closeRecoveryModal(event)">
+    <div class="recovery-modal" role="dialog" aria-modal="true" aria-labelledby="recoveryTitle">
+
+      <button class="recovery-close" onclick="closeRecoveryModal(true)" aria-label="Cerrar">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="recovery-header">
+        <div class="recovery-icon"><i class="fa-solid fa-envelope-open-text"></i></div>
+        <h3 id="recoveryTitle">Recuperar contraseña</h3>
+        <p>Ingrese su correo institucional y le enviaremos un enlace para restablecer su contraseña.</p>
+      </div>
+
+      <!-- Estado: formulario -->
+      <div id="recoveryForm">
+        <div class="login-field">
+          <label><i class="fa-solid fa-envelope"></i> Correo electrónico</label>
+          <input type="email" id="recoveryEmail"
+                 placeholder="usuario@cacsantabarbara.co"
+                 autocomplete="email"
+                 onkeydown="if(event.key==='Enter') doRecovery()"/>
+        </div>
+        <div class="login-error" id="recoveryError" style="display:none"></div>
+        <button class="btn-login" id="btnRecovery" style="margin-bottom:0" onclick="doRecovery()">
+          <i class="fa-solid fa-paper-plane"></i> Enviar enlace de recuperación
+        </button>
+      </div>
+
+      <!-- Estado: éxito -->
+      <div id="recoverySuccess" style="display:none" class="recovery-success">
+        <i class="fa-solid fa-circle-check"></i>
+        <h4>¡Correo enviado!</h4>
+        <p>Revise su bandeja de entrada y siga el enlace para restablecer su contraseña.<br>
+           <span>Si no lo encuentra, revise la carpeta de spam.</span></p>
+        <button class="btn-login" style="margin:0" onclick="closeRecoveryModal(true)">
+          <i class="fa-solid fa-check"></i> Entendido
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/auth.js"></script>
 </body>
 </html>

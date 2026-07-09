@@ -1,11 +1,8 @@
-const SUPABASE_URL      = 'https://cdarbygwhtwkdgkelktw.supabase.co';
+// SUPABASE_URL y db ya los define js/auth.js (cargado antes que este archivo).
 const SUPABASE_ANON_KEY = 'sb_publishable_hBoCRcO2ozNu8l9lcRSTOw_NHWUZ-Qb';
 
-// Edge Function que verifica el CAPTCHA e inserta el reporte de forma segura.
+// Edge Function que inserta el reporte de forma segura (requiere sesión).
 const CREAR_REPORTE_FN_URL = `${SUPABASE_URL}/functions/v1/crear-reporte-pqrsf`;
-
-const { createClient } = supabase;
-const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 /* ── UI config para cards ───────────────────────────────────── */
 const TIPO_REPORTE_UI = {

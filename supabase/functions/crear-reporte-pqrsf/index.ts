@@ -25,41 +25,25 @@ function json(body: unknown, status = 200) {
   });
 }
 
+// NOTA: esta funcion se despliega con verify_jwt=true. El gateway de Supabase
+// ya rechaza (401) cualquier llamada sin un Authorization: Bearer <access_token>
+// de un usuario autenticado antes de que este codigo se ejecute. El formulario
+// esta detras de un login (mismo Auth que la consola PQRSF), por lo que ya no
+// se requiere CAPTCHA (Turnstile) como control anti-bot adicional.
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: CORS });
   if (req.method !== 'POST') return json({ error: 'Metodo no permitido' }, 405);
 
-  let payload: { token?: string; data?: Record<string, unknown> };
+  let payload: { data?: Record<string, unknown> };
   try {
     payload = await req.json();
   } catch {
     return json({ error: 'JSON invalido' }, 400);
   }
 
-  const token = payload?.token;
   const data = payload?.data ?? {};
-  if (!token) return json({ error: 'Falta el token del captcha' }, 400);
 
-  // 1) Verificar el captcha (Cloudflare Turnstile) del lado del servidor.
-  const secret = Deno.env.get('TURNSTILE_SECRET_KEY');
-  if (!secret) return json({ error: 'Servidor sin TURNSTILE_SECRET_KEY configurada' }, 500);
-
-  const ip = req.headers.get('CF-Connecting-IP') ?? req.headers.get('x-forwarded-for') ?? '';
-  const form = new FormData();
-  form.append('secret', secret);
-  form.append('response', token);
-  if (ip) form.append('remoteip', ip.split(',')[0].trim());
-
-  const verifyRes = await fetch(
-    'https://challenges.cloudflare.com/turnstile/v0/siteverify',
-    { method: 'POST', body: form },
-  );
-  const verify = await verifyRes.json();
-  if (!verify.success) {
-    return json({ error: 'Verificacion de captcha fallida', detail: verify['error-codes'] }, 403);
-  }
-
-  // 2) Quedarnos SOLO con las columnas permitidas (ignora cualquier campo extra).
+  // Quedarnos SOLO con las columnas permitidas (ignora cualquier campo extra).
   const fila: Record<string, unknown> = {};
   for (const k of CAMPOS_PERMITIDOS) {
     if (data[k] !== undefined && data[k] !== '') fila[k] = data[k];
@@ -68,7 +52,7 @@ Deno.serve(async (req) => {
     return json({ error: 'Faltan datos minimos del reporte' }, 400);
   }
 
-  // 3) Insertar usando la service role key (el trigger fuerza estado/fechas).
+  // Insertar usando la service role key (el trigger fuerza estado/fechas).
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!,

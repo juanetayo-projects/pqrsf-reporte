@@ -600,12 +600,10 @@ async function submitForm() {
   btn.disabled = true;
   clearError('err6');
 
-  // ── CAPTCHA: token de Cloudflare Turnstile ────────────────
-  const captchaToken = window.turnstile
-    ? turnstile.getResponse()
-    : (document.querySelector('[name="cf-turnstile-response"]')?.value || '');
-  if (!captchaToken) {
-    setError('err6', 'Por favor complete la verificación de seguridad ("No soy un robot").');
+  // El envío requiere sesión activa (la Edge Function exige verify_jwt=true).
+  const { data: { session } } = await db.auth.getSession();
+  if (!session) {
+    setError('err6', 'Su sesión expiró. Vuelva a iniciar sesión e intente de nuevo.');
     btn.disabled = false;
     return;
   }
@@ -669,9 +667,9 @@ async function submitForm() {
       headers: {
         'Content-Type' : 'application/json',
         'apikey'       : SUPABASE_ANON_KEY,
-        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Authorization': `Bearer ${session.access_token}`,
       },
-      body: JSON.stringify({ token: captchaToken, data: payload }),
+      body: JSON.stringify({ data: payload }),
     });
     const result = await resp.json().catch(() => ({}));
 
@@ -709,7 +707,6 @@ async function submitForm() {
   } catch (err) {
     console.error(err);
     setError('err6', 'No se pudo enviar el formulario. Verifique la conexión e intente de nuevo.');
-    if (window.turnstile) turnstile.reset();   // permite reintentar el CAPTCHA
     btn.disabled = false;
     btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar PQRSF';
   }
@@ -739,7 +736,6 @@ function resetForm() {
   }
 
   removeFile();
-  if (window.turnstile) turnstile.reset();   // limpia la verificación para el próximo envío
 
   document.getElementById('hero').style.display        = '';
   document.getElementById('formSection').style.display = 'none';

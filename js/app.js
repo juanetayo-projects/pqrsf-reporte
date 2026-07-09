@@ -1,6 +1,9 @@
 const SUPABASE_URL      = 'https://cdarbygwhtwkdgkelktw.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_hBoCRcO2ozNu8l9lcRSTOw_NHWUZ-Qb';
 
+// Edge Function que verifica el CAPTCHA e inserta el reporte de forma segura.
+const CREAR_REPORTE_FN_URL = `${SUPABASE_URL}/functions/v1/crear-reporte-pqrsf`;
+
 const { createClient } = supabase;
 const db = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -573,6 +576,16 @@ async function submitForm() {
   btn.disabled = true;
   clearError('err6');
 
+  // ── CAPTCHA: token de Cloudflare Turnstile ────────────────
+  const captchaToken = window.turnstile
+    ? turnstile.getResponse()
+    : (document.querySelector('[name="cf-turnstile-response"]')?.value || '');
+  if (!captchaToken) {
+    setError('err6', 'Por favor complete la verificación de seguridad ("No soy un robot").');
+    btn.disabled = false;
+    return;
+  }
+
   const tipo    = document.querySelector('input[name="tipo_reporte"]:checked')?.value || '';
   const usuario = document.querySelector('input[name="tipo_usuario"]:checked')?.value  || '';
 
@@ -625,15 +638,25 @@ async function submitForm() {
   };
 
   try {
-    const { data, error } = await db
-      .from('reportes_pqrsf')
-      .insert([payload])
-      .select('id')
-      .single();
+    // Enviamos a la Edge Function: verifica el CAPTCHA del lado del servidor
+    // e inserta el reporte con privilegios seguros, devolviendo el id.
+    const resp = await fetch(CREAR_REPORTE_FN_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type' : 'application/json',
+        'apikey'       : SUPABASE_ANON_KEY,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+      },
+      body: JSON.stringify({ token: captchaToken, data: payload }),
+    });
+    const result = await resp.json().catch(() => ({}));
 
-    if (error) throw error;
+    if (!resp.ok || !result.ok) {
+      throw new Error(result.error || 'No se pudo registrar el reporte');
+    }
+    const nuevoId = result.id;
 
-    const radicado = `PQRSF-${String(data.id).padStart(6, '0')}`;
+    const radicado = `PQRSF-${String(nuevoId).padStart(6, '0')}`;
     document.getElementById('ticketNumber').textContent = radicado;
 
     // ── 3. Enviar correo de notificación (no bloqueante, máx 8 s) ──
@@ -646,7 +669,7 @@ async function submitForm() {
       try {
         await Promise.race([
           db.functions.invoke('notify-pqrsf', {
-            body: { reporte: { ...payload, id: data.id } },
+            body: { reporte: { ...payload, id: nuevoId } },
           }),
           mailTimeout,
         ]);
@@ -662,6 +685,7 @@ async function submitForm() {
   } catch (err) {
     console.error(err);
     setError('err6', 'No se pudo enviar el formulario. Verifique la conexión e intente de nuevo.');
+    if (window.turnstile) turnstile.reset();   // permite reintentar el CAPTCHA
     btn.disabled = false;
     btn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Enviar PQRSF';
   }
@@ -690,6 +714,7 @@ function resetForm() {
   }
 
   removeFile();
+  if (window.turnstile) turnstile.reset();   // limpia la verificación para el próximo envío
 
   document.getElementById('hero').style.display        = '';
   document.getElementById('formSection').style.display = 'none';

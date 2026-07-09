@@ -446,17 +446,7 @@ function removeProcesoTag(btn, e) {
   autoFillCorreo();
 }
 
-/* ── Plazo de respuesta (checkbox exclusivo) ───────────────────── */
-function onPlazoCheck(cb) {
-  if (cb.checked) {
-    document.querySelectorAll('input[name="plazo_respuesta"]').forEach(other => {
-      if (other !== cb) other.checked = false;
-    });
-    const errEl = document.getElementById('err5');
-    if (errEl) errEl.textContent = '';
-  }
-}
-
+/* ── Plazo de respuesta ─────────────────────────────────────── */
 function getPlazoSeleccionado() {
   return document.querySelector('input[name="plazo_respuesta"]:checked')?.value || '';
 }

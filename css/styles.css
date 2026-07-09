@@ -271,10 +271,10 @@ a:hover { text-decoration: underline; }
 .type-card-inner h3 { font-size: 1rem; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; }
 .type-card-inner p  { font-size: .78rem; color: var(--gray-500); line-height: 1.4; }
 
-/* ── Plazo de respuesta (checkbox) ────────────────────────────── */
+/* ── Plazo de respuesta (radio en una sola fila) ──────────────── */
 .plazo-options {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  display: flex;
+  flex-wrap: nowrap;
   gap: 12px;
 }
 .plazo-option {
@@ -282,6 +282,8 @@ a:hover { text-decoration: underline; }
   display: flex;
   align-items: center;
   gap: 10px;
+  flex: 1;
+  min-width: 0;
   border: 2px solid var(--gray-300);
   border-radius: var(--radius);
   padding: 14px 16px;
@@ -289,28 +291,41 @@ a:hover { text-decoration: underline; }
   transition: all .2s;
 }
 .plazo-option:hover { border-color: var(--blue-300); background: var(--blue-50); }
-.plazo-option input[type=checkbox] { display: none; }
-.plazo-box {
-  width: 22px; height: 22px;
+.plazo-option input[type=radio] { display: none; }
+.plazo-radio {
+  width: 20px; height: 20px;
   border: 2px solid var(--gray-300);
-  border-radius: 6px;
-  display: flex; align-items: center; justify-content: center;
+  border-radius: 50%;
   flex-shrink: 0;
-  color: transparent;
+  position: relative;
   transition: all .2s;
 }
-.plazo-box i { font-size: 12px; }
-.plazo-option input:checked ~ .plazo-box {
+.plazo-radio::after {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 10px; height: 10px;
+  border-radius: 50%;
   background: var(--blue-700);
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform .15s;
+}
+.plazo-option input:checked ~ .plazo-radio {
   border-color: var(--blue-700);
-  color: var(--white);
+}
+.plazo-option input:checked ~ .plazo-radio::after {
+  transform: translate(-50%, -50%) scale(1);
 }
 .plazo-option:has(input:checked) {
   border-color: var(--blue-700);
   background: var(--blue-50);
   box-shadow: 0 0 0 3px rgba(26,79,155,.15);
 }
-.plazo-text { font-size: .9rem; font-weight: 600; color: var(--gray-900); }
+.plazo-text { font-size: .9rem; font-weight: 600; color: var(--gray-900); white-space: nowrap; }
+@media (max-width: 700px) {
+  .plazo-options { flex-wrap: wrap; }
+  .plazo-option { flex: 1 1 calc(50% - 6px); }
+}
 
 /* ── User type cards ───────────────────────────────────────── */
 .user-type-grid {

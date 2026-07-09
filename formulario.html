@@ -275,23 +275,23 @@
           <label><i class="fa-solid fa-calendar-days"></i> Días hábiles para responder <span class="req">*</span></label>
           <div class="plazo-options" id="plazoOptions">
             <label class="plazo-option">
-              <input type="checkbox" name="plazo_respuesta" value="24 horas" onchange="onPlazoCheck(this)" />
-              <span class="plazo-box"><i class="fa-solid fa-check"></i></span>
+              <input type="radio" name="plazo_respuesta" value="24 horas" onchange="clearError('err5')" />
+              <span class="plazo-radio"></span>
               <span class="plazo-text">24 horas</span>
             </label>
             <label class="plazo-option">
-              <input type="checkbox" name="plazo_respuesta" value="48 horas" onchange="onPlazoCheck(this)" />
-              <span class="plazo-box"><i class="fa-solid fa-check"></i></span>
+              <input type="radio" name="plazo_respuesta" value="48 horas" onchange="clearError('err5')" />
+              <span class="plazo-radio"></span>
               <span class="plazo-text">48 horas</span>
             </label>
             <label class="plazo-option">
-              <input type="checkbox" name="plazo_respuesta" value="72 horas" onchange="onPlazoCheck(this)" />
-              <span class="plazo-box"><i class="fa-solid fa-check"></i></span>
+              <input type="radio" name="plazo_respuesta" value="72 horas" onchange="clearError('err5')" />
+              <span class="plazo-radio"></span>
               <span class="plazo-text">72 horas</span>
             </label>
             <label class="plazo-option">
-              <input type="checkbox" name="plazo_respuesta" value="1 a 5 días calendario" onchange="onPlazoCheck(this)" />
-              <span class="plazo-box"><i class="fa-solid fa-check"></i></span>
+              <input type="radio" name="plazo_respuesta" value="1 a 5 días calendario" onchange="clearError('err5')" />
+              <span class="plazo-radio"></span>
               <span class="plazo-text">1 a 5 días calendario</span>
             </label>
           </div>

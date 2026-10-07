@@ -150,10 +150,10 @@ function json(body: unknown, status = 200) {
 }
 
 /* ── Email para analistas (interno) ────────────────────────── */
-function buildAnalistaHtml(r: Record<string, string>): string {
+function buildAnalistaHtml(r: Record<string, string>, reenvio = false): string {
   const radicado = `PQRSF-${String(r.id).padStart(6, '0')}`;
   const color    = TIPO_COLOR[r.tipo_reporte] ?? '#1a4f9b';
-  const fechaRec = new Date().toLocaleString('es-CO', {
+  const fechaRec = new Date(r.created_at ?? Date.now()).toLocaleString('es-CO', {
     year:'numeric', month:'long', day:'numeric',
     hour:'2-digit', minute:'2-digit', timeZone:'America/Bogota',
   });
@@ -178,6 +178,11 @@ function buildAnalistaHtml(r: Record<string, string>): string {
       <div style="font-size:30px;font-weight:800;color:#0d2d6b;letter-spacing:3px;margin:6px 0;">${radicado}</div>
       <div style="font-size:12px;color:#9ca3af;">Recibido el ${fechaRec}</div>
     </div>
+    ${reenvio ? `<div style="margin:18px 44px 0;background:#fffbeb;border-left:4px solid #f59e0b;
+                border-radius:0 8px 8px 0;padding:12px 16px;font-size:13px;color:#92400e;line-height:1.5;">
+      <strong>Enlace actualizado.</strong> Este correo reemplaza la notificación anterior de este radicado:
+      use el botón <strong>Responder PQRSF</strong> de este mensaje para registrar la respuesta sin iniciar sesión.
+    </div>` : ''}
     <div style="height:1px;background:#deeaf8;margin:20px 44px;"></div>
     <div style="padding:4px 44px 20px;">
       <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;
@@ -322,6 +327,8 @@ serve(async (req) => {
       return json({ ok: false, error: 'La notificación solo se envía al crear el radicado' }, 403);
     }
 
+    // Reenvío (solo service_role): únicamente al proceso, sin repetir la confirmación al paciente.
+    const reenvio = esServicio && body?.reenvio === true;
     const reporte = escapar(guardado);
     if (!reporte.correo_proceso && !reporte.email_reporta) {
       return json({ ok: false, error: 'Sin correo destino' }, 400);
@@ -336,14 +343,16 @@ serve(async (req) => {
         .split(',').map((e: string) => e.trim()).filter(Boolean);
       const res = await sendEmail(
         destinatarios,
-        `📋 Nueva ${reporte.tipo_reporte} registrada – ${radicado}`,
-        buildAnalistaHtml(reporte),
+        reenvio
+          ? `🔁 Enlace actualizado para responder: ${reporte.tipo_reporte} – ${radicado}`
+          : `📋 Nueva ${reporte.tipo_reporte} registrada – ${radicado}`,
+        buildAnalistaHtml(reporte, reenvio),
       );
       results.analista = await res.json();
     }
 
     // 2. Confirmación al paciente
-    if (reporte.email_reporta) {
+    if (reporte.email_reporta && !reenvio) {
       const res = await sendEmail(
         [reporte.email_reporta],
         `✅ Hemos recibido su ${reporte.tipo_reporte ?? 'solicitud'} – ${radicado}`,

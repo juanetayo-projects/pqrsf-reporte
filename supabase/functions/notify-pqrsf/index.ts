@@ -3,7 +3,10 @@ import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY') ?? '';
 const FROM_EMAIL     = Deno.env.get('FROM_EMAIL') ?? 'PQRSF Santa Bárbara <notificaciones@cacsantabarbara.co>';
 const APP_URL_REPORTE  = 'https://juanetayo-projects.github.io/pqrsf-reporte/';
-const APP_URL_RESPUESTA = 'https://juanetayo-projects.github.io/pqrsf-respuesta/';
+// Respuesta pública (sin login) en SIAU; el enlace lleva el código único del reporte.
+const APP_URL_RESPUESTA = 'https://siau.cacsb.net/#/responder';
+const SUPABASE_URL     = Deno.env.get('SUPABASE_URL') ?? '';
+const SERVICE_KEY      = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
 const LOGO_URL         = 'https://juanetayo-projects.github.io/pqrsf-reporte/assets/logo-wide.png';
 
 const CORS = {
@@ -112,6 +115,24 @@ function fallaRow(falla: string | null | undefined): string {
   </tr>`;
 }
 
+/* ── Enlace de respuesta con código único ───────────────────── */
+function linkRespuesta(r: Record<string, string>): string {
+  return r.token_respuesta
+    ? `${APP_URL_RESPUESTA}?r=${r.id}&t=${r.token_respuesta}`
+    : APP_URL_RESPUESTA;
+}
+
+/* ── Reporte desde la BD (incluye token_respuesta) ──────────── */
+async function cargarReporte(id: number): Promise<Record<string, string> | null> {
+  if (!SUPABASE_URL || !SERVICE_KEY || !id) return null;
+  const res = await fetch(`${SUPABASE_URL}/rest/v1/reportes_pqrsf?id=eq.${id}&select=*`, {
+    headers: { apikey: SERVICE_KEY, Authorization: `Bearer ${SERVICE_KEY}` },
+  });
+  if (!res.ok) return null;
+  const rows = await res.json();
+  return rows?.[0] ?? null;
+}
+
 /* ── Email para analistas (interno) ────────────────────────── */
 function buildAnalistaHtml(r: Record<string, string>): string {
   const radicado = `PQRSF-${String(r.id).padStart(6, '0')}`;
@@ -178,7 +199,7 @@ function buildAnalistaHtml(r: Record<string, string>): string {
       <p style="font-size:13px;color:#6b7280;margin:0 0 16px;">
         Ingrese al sistema para gestionar y responder esta solicitud.
       </p>
-      <a href="${APP_URL_RESPUESTA}" style="display:inline-block;background:#1a4f9b;color:#ffffff;
+      <a href="${linkRespuesta(r)}" style="display:inline-block;background:#1a4f9b;color:#ffffff;
                text-decoration:none;padding:12px 30px;border-radius:8px;font-size:14px;font-weight:600;">
         Responder PQRSF &rarr;
       </a>
@@ -274,7 +295,12 @@ serve(async (req) => {
   }
 
   try {
-    const { reporte } = await req.json();
+    const body = await req.json();
+    // Los datos guardados en la BD prevalecen sobre los enviados por el cliente.
+    const guardado = await cargarReporte(Number(body?.reporte?.id));
+    const reporte = guardado
+      ? { ...body.reporte, ...Object.fromEntries(Object.entries(guardado).filter(([, v]) => v != null)) }
+      : body.reporte;
 
     if (!reporte?.correo_proceso && !reporte?.email_reporta) {
       return new Response(

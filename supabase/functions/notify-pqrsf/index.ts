@@ -133,6 +133,22 @@ async function cargarReporte(id: number): Promise<Record<string, string> | null>
   return rows?.[0] ?? null;
 }
 
+/* ── Escapa HTML de los textos que vienen del formulario ────── */
+const esc = (v: unknown) => String(v)
+  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+function escapar(r: Record<string, unknown>): Record<string, string> {
+  return Object.fromEntries(Object.entries(r).map(([k, v]) => [k, v == null ? v : esc(v)])) as Record<string, string>;
+}
+
+// Ventana para enviar la notificación de un radicado recién creado. Fuera de ella
+// solo se permite con la service_role (reenvíos internos), para evitar abuso.
+const VENTANA_MS = 30 * 60 * 1000;
+
+function json(body: unknown, status = 200) {
+  return new Response(JSON.stringify(body), { status, headers: { ...CORS, 'Content-Type': 'application/json' } });
+}
+
 /* ── Email para analistas (interno) ────────────────────────── */
 function buildAnalistaHtml(r: Record<string, string>): string {
   const radicado = `PQRSF-${String(r.id).padStart(6, '0')}`;
@@ -296,17 +312,19 @@ serve(async (req) => {
 
   try {
     const body = await req.json();
-    // Los datos guardados en la BD prevalecen sobre los enviados por el cliente.
+    // Solo se usan los datos guardados en la BD: el cliente únicamente indica el id.
     const guardado = await cargarReporte(Number(body?.reporte?.id));
-    const reporte = guardado
-      ? { ...body.reporte, ...Object.fromEntries(Object.entries(guardado).filter(([, v]) => v != null)) }
-      : body.reporte;
+    if (!guardado) return json({ ok: false, error: 'Radicado no encontrado' }, 404);
 
-    if (!reporte?.correo_proceso && !reporte?.email_reporta) {
-      return new Response(
-        JSON.stringify({ ok: false, error: 'Sin correo destino' }),
-        { status: 400, headers: { ...CORS, 'Content-Type': 'application/json' } },
-      );
+    const esServicio = (req.headers.get('Authorization') ?? '') === `Bearer ${SERVICE_KEY}`;
+    const creado = new Date(guardado.created_at ?? guardado.timestamp).getTime();
+    if (!esServicio && !(Date.now() - creado < VENTANA_MS)) {
+      return json({ ok: false, error: 'La notificación solo se envía al crear el radicado' }, 403);
+    }
+
+    const reporte = escapar(guardado);
+    if (!reporte.correo_proceso && !reporte.email_reporta) {
+      return json({ ok: false, error: 'Sin correo destino' }, 400);
     }
 
     const radicado = `PQRSF-${String(reporte.id).padStart(6, '0')}`;
